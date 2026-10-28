@@ -1,0 +1,167 @@
+"use client";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { Card, btn } from "@/components/ui";
+import { funnel, stageIndex } from "@/lib/funnel";
+import { store, useOpportunities } from "@/lib/store";
+import { STAGES, STAGE_LABEL, type Opportunity } from "@/lib/types";
+
+function download(name: string, body: string, type: string) {
+  const url = URL.createObjectURL(new Blob([body], { type }));
+  const a = Object.assign(document.createElement("a"), { href: url, download: name });
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function toCSV(opps: Opportunity[]) {
+  const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+  const head = ["title", "corridor", "sector", "stage", "created", "illustrative", "evidence_confirmed"];
+  const rows = opps.map((o) =>
+    [o.analysis.title, o.analysis.corridor ?? "", o.analysis.sector ?? "", o.stage, o.createdAt.slice(0, 10), String(!!o.illustrative), String(o.evidence.filter((e) => e.status === "confirmed").length)].map(esc).join(","),
+  );
+  return [head.join(","), ...rows].join("\n");
+}
+
+export default function Dashboard() {
+  const all = useOpportunities();
+  const [mounted, setMounted] = useState(false);
+  const [includeSeed, setIncludeSeed] = useState(true);
+  useEffect(() => setMounted(true), []);
+
+  const opps = useMemo(() => (includeSeed ? all : all.filter((o) => !o.illustrative)), [all, includeSeed]);
+  const f = funnel(opps);
+  const max = Math.max(1, f.counts.introduced);
+  const hasSeed = all.some((o) => o.illustrative);
+
+  const corridors = useMemo(() => {
+    const m = new Map<string, { n: number; meet: number; part: number }>();
+    for (const o of opps) {
+      const k = o.analysis.corridor || "Unspecified";
+      const r = m.get(k) ?? { n: 0, meet: 0, part: 0 };
+      r.n++;
+      if (stageIndex(o.stage) >= 1) r.meet++;
+      if (stageIndex(o.stage) >= 3) r.part++;
+      m.set(k, r);
+    }
+    return [...m.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 8);
+  }, [opps]);
+
+  if (!mounted) return null;
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">ASEAN Partnership Funnel</h1>
+          <p className="mt-1 max-w-xl text-sm text-muted">
+            Only evidence-backed, human-confirmed milestones count. Drafts, proposed pilots and hearsay don&apos;t.
+          </p>
+        </div>
+        {hasSeed && (
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={includeSeed} onChange={(e) => setIncludeSeed(e.target.checked)} className="h-4 w-4 accent-[var(--color-accent)]" />
+            Include illustrative data
+          </label>
+        )}
+      </div>
+
+      <Card>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {STAGES.map((s) => (
+            <div key={s}>
+              <div className="text-xs font-medium text-muted">{STAGE_LABEL[s]}</div>
+              <div className="num mt-1 text-4xl font-semibold">{f.counts[s]}</div>
+              <div className="mt-2 h-2 rounded-full bg-paper">
+                <div className="h-2 rounded-full bg-accent transition-all duration-700" style={{ width: `${(f.counts[s] / max) * 100}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 grid grid-cols-2 gap-3 border-t border-line pt-5 sm:grid-cols-4">
+          <Metric label="Intro → Meeting" value={`${f.introToMeeting}%`} strong />
+          <Metric label="Intro → Partnership" value={`${f.introToPartnership}%`} strong />
+          <Metric label="Committed, not yet delivered" value={String(f.committedNotDone)} hint="Deals with a promise outstanding" />
+          <Metric label="Evidence awaiting review" value={String(f.pendingEvidence)} hint="Needs a human decision" />
+        </div>
+        <div className="mt-5 flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted">
+          {f.stepRates.map((r) => (
+            <span key={r.to} className="num">
+              {STAGE_LABEL[r.from]} → {STAGE_LABEL[r.to]}: {r.rate}%
+            </span>
+          ))}
+        </div>
+      </Card>
+
+      <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
+        <Card title="Opportunities" right={<span className="num text-xs text-muted">{opps.length}</span>}>
+          <ul className="divide-y divide-line">
+            {[...opps]
+              .sort((a, b) => stageIndex(b.stage) - stageIndex(a.stage) || b.updatedAt.localeCompare(a.updatedAt))
+              .map((o) => (
+                <li key={o.id}>
+                  <Link href={`/opportunity/${o.id}`} className="flex items-center gap-3 py-2.5 hover:bg-paper/60">
+                    <div className="flex w-16 shrink-0 gap-0.5">
+                      {STAGES.map((s, i) => (
+                        <span key={s} className={`h-1.5 flex-1 rounded-full ${i <= stageIndex(o.stage) ? "bg-accent" : "bg-line"}`} />
+                      ))}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-medium">
+                        {o.analysis.title}
+                        {!o.illustrative && <span className="ml-2 rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold text-accent">LIVE</span>}
+                      </div>
+                      <div className="truncate text-xs text-muted">{o.analysis.corridor}</div>
+                    </div>
+                    <span className="shrink-0 text-xs text-muted">{STAGE_LABEL[o.stage]}</span>
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        </Card>
+
+        <div className="space-y-5">
+          <Card title="By corridor">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-muted">
+                  <th className="pb-2 font-medium">Corridor</th>
+                  <th className="pb-2 text-right font-medium">Intros</th>
+                  <th className="pb-2 text-right font-medium">→ Meeting</th>
+                </tr>
+              </thead>
+              <tbody className="num">
+                {corridors.map(([k, r]) => (
+                  <tr key={k} className="border-t border-line">
+                    <td className="py-1.5 font-sans">{k}</td>
+                    <td className="py-1.5 text-right">{r.n}</td>
+                    <td className="py-1.5 text-right">{Math.round((r.meet / r.n) * 100)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card>
+
+          <Card title="Data">
+            <div className="flex flex-wrap gap-2">
+              <button className={btn.ghost} onClick={() => download("handshakeos.csv", toCSV(opps), "text/csv")}>Export CSV</button>
+              <button className={btn.ghost} onClick={() => download("handshakeos.json", JSON.stringify(all, null, 2), "application/json")}>Export JSON</button>
+              <button className={btn.ghost} onClick={() => confirm("Reset to illustrative demo data? Your captured deals will be removed.") && store.reset(true)}>Reset demo</button>
+              <button className={btn.ghost} onClick={() => confirm("Remove everything, including illustrative data?") && store.reset(false)}>Start empty</button>
+            </div>
+            <p className="mt-3 text-xs text-muted">Stored in this browser. Connect Supabase to aggregate across the Startup ASEAN ecosystem.</p>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Metric({ label, value, hint, strong }: { label: string; value: string; hint?: string; strong?: boolean }) {
+  return (
+    <div>
+      <div className="text-xs text-muted">{label}</div>
+      <div className={`num mt-0.5 font-semibold ${strong ? "text-2xl text-accent" : "text-xl"}`}>{value}</div>
+      {hint && <div className="text-[11px] text-muted">{hint}</div>}
+    </div>
+  );
+}

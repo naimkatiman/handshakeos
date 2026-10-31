@@ -1,29 +1,11 @@
 import type { Opportunity, Stage } from "./types";
 import { STAGES } from "./types";
+import rows from "../dataset/seed-partnerships.json";
 
-// 19 illustrative deals. With the live demo deal added and advanced to "meeting",
+// 19 illustrative deals from dataset/seed-partnerships.json.
+// With the live demo deal added and advanced to "meeting",
 // the funnel reads 20 → 8 → 3 → 1 (40% intro→meeting, 5% intro→partnership).
-const ROWS: [string, string, string, string, Stage][] = [
-  ["PayLane × Koperasi Maju", "Malaysia", "Malaysia", "Fintech", "partnership"],
-  ["AgriSense × Mekong Rice Co.", "Malaysia", "Vietnam", "Agritech", "poc"],
-  ["KlinikNow × Cebu Health Network", "Malaysia", "Philippines", "Healthtech", "poc"],
-  ["EduPintar × Jakarta Tutors Guild", "Malaysia", "Indonesia", "Edtech", "meeting"],
-  ["GreenWatt × Bangkok Malls Group", "Thailand", "Thailand", "Climate", "meeting"],
-  ["HalalChain × Brunei Foods", "Malaysia", "Brunei", "Supply chain", "meeting"],
-  ["SewaBot × Penang Property Mgmt", "Malaysia", "Malaysia", "Proptech", "meeting"],
-  ["TaniFund × Sabah Growers", "Indonesia", "Malaysia", "Agritech", "introduced"],
-  ["FleetIQ × Hanoi Couriers", "Singapore", "Vietnam", "Logistics", "introduced"],
-  ["Lingo.ai × Manila BPO Alliance", "Philippines", "Philippines", "AI", "introduced"],
-  ["CarbonLedger × Kuching Timber", "Singapore", "Malaysia", "Climate", "introduced"],
-  ["ShopSuara × Surabaya Retail", "Malaysia", "Indonesia", "Retail", "introduced"],
-  ["MediTrack × Phnom Penh Clinics", "Thailand", "Cambodia", "Healthtech", "introduced"],
-  ["InsureMe × Yangon Microfinance", "Singapore", "Myanmar", "Insurtech", "introduced"],
-  ["CodeKampus × Vientiane Uni", "Malaysia", "Laos", "Edtech", "introduced"],
-  ["SolarPay × Davao Co-ops", "Philippines", "Philippines", "Climate", "introduced"],
-  ["ParkPintar × Shah Alam Council", "Malaysia", "Malaysia", "Govtech", "introduced"],
-  ["Tukang.io × Johor Contractors", "Malaysia", "Malaysia", "Marketplace", "introduced"],
-  ["BayarLah × Ipoh Merchants", "Malaysia", "Malaysia", "Payments", "introduced"],
-];
+const ROWS = rows as [string, string, string, string, Stage][];
 
 export function seedOpportunities(): Opportunity[] {
   const now = Date.now();

@@ -40,7 +40,8 @@ q { quotes: "\201C" "\201D"; }
   color: var(--sc-accent-ink); background: var(--sc-accent); padding: 0.5rem 0.9rem; border-radius: 0.5rem; font-weight: 600;
 }
 .bar__links .bar__cta:hover { color: var(--sc-accent-ink); filter: brightness(1.08); }
-@media (max-width: 640px) { .bar__links a:not(.bar__cta) { display: none; } }
+.bar__links .bar__lang { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.06em; padding: 0.3rem 0.55rem; border: 1px solid var(--sc-hairline-strong); border-radius: 0.4rem; }
+@media (max-width: 640px) { .bar__links a:not(.bar__cta):not(.bar__lang) { display: none; } }
 
 /* ── buttons + stamps ────────────────────────────────────────────────── */
 .btn {

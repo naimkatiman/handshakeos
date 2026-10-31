@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import AskDeal from "@/components/AskDeal";
 import { Card, EngineTag, LevelBadge, Spinner, StageTrack, btn } from "@/components/ui";
 import { fileToImageInput } from "@/lib/image";
 import { stageIndex } from "@/lib/funnel";
@@ -154,6 +155,8 @@ export default function OpportunityPage() {
               )}
             </dl>
           </Card>
+
+          <AskDeal opp={opp} />
 
           {opp.actions.length > 0 && (
             <Card title="Next actions" right={<span className="num text-xs text-muted">{opp.actions.filter((x) => x.done).length}/{opp.actions.length}</span>}>

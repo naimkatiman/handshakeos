@@ -73,6 +73,14 @@ export default function Dashboard() {
 
   const shown = filter ? opps.filter((o) => (o.analysis.corridor ?? "").includes(filter)) : opps;
 
+  // What a country or corridor filter means in numbers: only confirmed stages count, as everywhere else.
+  const insight = useMemo(() => {
+    if (!filter || !shown.length) return null;
+    const top = [...shown].sort((a, b) => stageIndex(b.stage) - stageIndex(a.stage))[0];
+    const met = shown.filter((o) => stageIndex(o.stage) >= 1).length;
+    return { n: shown.length, rate: Math.round((met / shown.length) * 100), top };
+  }, [filter, shown]);
+
   if (!mounted) return null;
 
   return (
@@ -154,6 +162,21 @@ export default function Dashboard() {
         right={filter ? <button className="text-xs font-medium text-accent underline" onClick={() => setFilter(null)}>Clear filter: {filter}</button> : <span className="text-xs text-muted">Pick a country to filter</span>}
       >
         <CorridorMap corridors={mapCorridors} selected={filter && HUBS[filter] ? filter : null} onSelect={setFilter} />
+        {insight && (
+          <div aria-live="polite" className="mt-3 grid gap-3 rounded-lg border border-accent/30 bg-accent-soft/50 p-3 text-sm sm:grid-cols-[auto_auto_1fr] sm:items-center sm:gap-6">
+            <span>
+              <span className="num text-xl font-semibold">{insight.n}</span> <span className="text-muted">deal{insight.n === 1 ? "" : "s"} touching {filter}</span>
+            </span>
+            <span>
+              <span className="num text-xl font-semibold text-accent">{insight.rate}%</span> <span className="text-muted">reached a confirmed meeting</span>
+            </span>
+            <Link href={`/opportunity/${insight.top.id}`} className="min-w-0 truncate hover:text-accent">
+              <span className="text-muted">Furthest: </span>
+              <span className="font-medium">{insight.top.analysis.title}</span>
+              <span className="text-muted"> · {STAGE_LABEL[insight.top.stage]}</span>
+            </Link>
+          </div>
+        )}
         <p className="mt-3 text-xs text-muted">
           Each arc is coloured by the furthest stage a deal on it has reached with confirmed evidence. Particles flow only where a deal moved past Introduced. Rings are deals inside one country.
         </p>

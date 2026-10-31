@@ -133,5 +133,10 @@
   "v": "v26",
   "change": "Printable deal brief: a \"Print brief\" button on every opportunity and a print stylesheet that turns the dark page into a white one-deal brief (light palette, \"HandshakeOS deal brief\" header), keeps the funnel, actions, every quoted claim, risks, the follow-up message as text and the audit trail, and drops navigation, the guide, buttons, links, the Ask card and an empty evidence form. Judge: in print media no buttons or links render, the follow-up text prints, the empty Evidence Engine card and back link are gone; screen view unchanged.",
   "why": "Founders forward a plan to a co-founder or bring it to the follow-up call; printing the dark app gave a wasteful page of controls."
+ },
+ {
+  "v": "v27",
+  "change": "Outcomes shows your own funnel: illustrative deals are on only until the visitor has captured a real one, then the funnel, rates and map default to \"Your N deals only\" with the sample set one toggle away; a scope line says exactly what is on screen, and rows are tagged YOURS or ILLUSTRATIVE. Judge: fresh browser shows the illustrative set (Introduced 19) with a CTA; after one real deal, \"Your 1 deal only.\" with Introduced 1 and the toggle off; toggling on gives 20 and \"plus the illustrative set\".",
+  "why": "A visitor with two real deals saw \"Introduced: 21\": their own metrics were buried in sample data."
  }
 ]

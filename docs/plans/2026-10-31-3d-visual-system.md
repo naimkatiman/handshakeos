@@ -58,3 +58,9 @@ The judge caught a five-pixel navigation overflow after the larger brand mark. T
 Scope includes the current /versions page and the newly published tutorial. No changes to source copy, API behavior, storage, release scripts, package dependencies, or production deployment.
 
 The next outcome to measure is whether first-time users recognize the capture-to-evidence-to-outcome flow more readily. That requires user observation; no conversion or usability improvement is claimed from screenshots alone.
+
+## Production release, 2026-10-31
+
+The user subsequently authorized: "go push and deploy". Release from release/3d-visuals-20261031 through a GitHub pull request. Preserve the already-live v22-v25 commits (deal questions, CSP, branded 404, and keyboard access), which were missing from origin/main. Those committed changes were replayed before the three visual commits in an isolated worktree. Uncommitted changes in the other sessions remain excluded. The production baseline at preflight is Worker version 683fae61-ec6c-4203-ab5a-e5da1c5fae59 (100% traffic), with v25 and CSP verified publicly.
+
+Release gates: typecheck and production browser suite on the combined source; approved PR head checked immediately before merge; clean worktree at the exact merged SHA; OpenNext build; deployment with existing variables and secrets preserved; public asset hashes, favicon, CSP, keyboard access, and the sample evidence flow verified after deployment. No migrations are owned by this release.

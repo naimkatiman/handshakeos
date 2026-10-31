@@ -83,6 +83,72 @@ const artwork = {
     ${path('M135 58 170 76V185L135 167Z', '#b0cbbf')}${path('M170 76 204 57V166L170 185Z', '#6c9e8f')}
     ${line('M43 109 84 91 119 58 169 20M146 22 171 18 172 43', '#f1c875', 6)}
     ${line('M48 139 82 157 115 139M92 103 126 121 159 103M136 58 170 76 202 59', '#f5fff5', 1.5, 'opacity=".7"')}</g>`,
+  mail: `<g transform="rotate(-11 120 120)">
+    <g transform="translate(36 15) rotate(13 110 110)">${solid('M45 65H175Q189 65 189 79V161Q189 175 175 175H45Q31 175 31 161V79Q31 65 45 65Z', 'navy', 10, '#102331')}</g>
+    ${solid('M35 70H183Q199 70 199 86V167Q199 183 183 183H35Q19 183 19 167V86Q19 70 35 70Z', 'mint', 12)}
+    ${path('M22 86 97 139Q110 149 123 139L196 86V166Q196 180 182 180H36Q22 180 22 166Z', '#299f81')}
+    ${path('M23 165 83 122 99 136Q110 145 121 136L139 122 196 165Q196 180 183 180H36Q23 180 23 165Z', 'url(#mint)')}
+    ${solid('M36 71H182Q193 71 196 82L122 135Q110 144 98 135L22 82Q25 71 36 71Z', 'ivory', 4, '#83aa98')}
+    ${line('M30 80 100 131Q110 138 120 131L188 80', '#fffef3', 2, 'opacity=".8"')}
+    <circle cx="181" cy="58" r="27" fill="#997536"/><circle cx="181" cy="52" r="27" fill="url(#gold)" stroke="#fff1ba"/>
+    ${line('M169 53H193M183 44 193 53 183 62', '#684e25', 4)}</g>`,
+  checklist: `<g transform="rotate(-9 120 120)">
+    ${solid('M62 43H167Q183 43 183 59V183Q183 199 167 199H62Q46 199 46 183V59Q46 43 62 43Z', 'navy', 10, '#0e2630')}
+    ${solid('M64 56H161Q169 56 169 64V179Q169 187 161 187H64Q56 187 56 179V64Q56 56 64 56Z', 'ivory', 3, '#6a8f83')}
+    ${solid('M94 34H139Q149 34 149 44V59Q149 67 139 67H94Q84 67 84 59V44Q84 34 94 34Z', 'mint', 5)}
+    <circle cx="116" cy="43" r="5" fill="#36765d"/>
+    <g fill="#40b88c"><rect x="73" y="89" width="19" height="19" rx="5"/><rect x="73" y="124" width="19" height="19" rx="5"/><rect x="73" y="159" width="19" height="19" rx="5" opacity=".3"/></g>
+    ${line('M78 97 82 101 88 93M78 132 82 136 88 128', '#f6fff4', 2.5)}
+    ${line('M104 95H147M104 104H135M104 130H147M104 139H127M104 165H137', '#6c8b7f', 4)}
+    <g transform="rotate(23 178 147)">${solid('M171 90H184V183L177 198 171 183Z', 'gold', 5, '#8b632a')}${path('M171 183H184L177 198Z', '#f2ead1')}${path('M175 193H180L177 198Z', '#183528')}</g></g>`,
+  calendar: `<g transform="rotate(-10 120 120)">
+    ${solid('M51 55H183Q199 55 199 71V179Q199 195 183 195H51Q35 195 35 179V71Q35 55 51 55Z', 'ivory', 11, '#557f70')}
+    ${path('M51 55H183Q199 55 199 71V93H35V71Q35 55 51 55Z', 'url(#mint)')}
+    ${line('M39 94H195', '#276951', 2)}
+    ${line('M76 42V65M155 42V65', '#143e37', 13)}${line('M74 40V61M153 40V61', '#d8f5df', 6)}
+    <g fill="#719382"><rect x="61" y="111" width="18" height="14" rx="4"/><rect x="98" y="111" width="18" height="14" rx="4"/><rect x="136" y="111" width="18" height="14" rx="4"/><rect x="61" y="144" width="18" height="14" rx="4"/><rect x="98" y="144" width="18" height="14" rx="4"/></g>
+    <circle cx="173" cy="166" r="35" fill="#8a672e"/><circle cx="173" cy="159" r="35" fill="url(#gold)" stroke="#ffefb2" stroke-width="2"/>
+    ${line('M173 138V160L187 167', '#715027', 5)}<circle cx="173" cy="160" r="4" fill="#715027"/></g>`,
+  search: `<g transform="rotate(-10 120 120)">
+    <g transform="translate(-5 0) scale(.88)">${solid(sheet, 'ivory', 8, '#6b9285')}${line('M70 69H146M70 88H129M70 112H144M70 132H120', '#7c9b8f', 6)}</g>
+    <g transform="rotate(-37 156 163)">${solid('M142 142H167V211Q167 218 159 218H150Q142 218 142 211Z', 'navy', 7, '#102631')}${path('M143 184H166V207H143Z', 'url(#mint)')}</g>
+    <circle cx="128" cy="115" r="61" fill="#175a4b" transform="translate(0 9)"/>
+    <circle cx="128" cy="115" r="60" fill="url(#mint)" stroke="#d6ffeb" stroke-width="1.5"/>
+    <circle cx="128" cy="115" r="43" fill="url(#navy)" stroke="#163e37" stroke-width="4"/>
+    ${path('M95 96Q126 63 160 99L108 139Q92 121 95 96Z', '#7de9c5', 'opacity=".2"')}
+    ${line('M106 113H148M106 125H135', '#91d1b6', 5)}${line('M99 86Q119 70 140 77', '#f5fff5', 3, 'opacity=".75"')}</g>`,
+  archive: `<g transform="translate(1 -7)">
+    ${solid('M37 118 116 84 205 118 205 181 121 216 37 182Z', 'mint', 6)}
+    ${path('M37 118 121 153V216L37 182Z', '#217b61')}${path('M121 153 205 118V181L121 216Z', '#16503f')}
+    ${solid('M55 64 105 44 133 55 133 119 81 142 55 130Z', 'ivory', 6, '#8aac99')}
+    ${solid('M91 47 121 35 177 57V137L121 158 91 145Z', 'ivory', 7, '#7c9c8b')}
+    ${path('M100 68 120 61 167 78V89L120 72 100 80Z', '#86ac95')}
+    ${path('M100 91 120 84 167 101V111L120 94 100 102Z', '#86ac95')}
+    ${solid('M28 121 115 86 214 120 127 158Z', 'mint', 12, '#1b604b')}
+    ${path('M29 123 127 162V176L29 137Z', '#71d9ae')}${path('M127 162 214 124V139L127 176Z', '#247659')}
+    ${line('M66 165 96 177', '#c0f5d8', 6)}${line('M32 123 126 160 210 125', '#ddffe9', 2)}</g>`,
+  alert: `<g transform="rotate(-8 120 120)">
+    ${solid('M108 44Q119 26 130 44L212 178Q224 197 202 197H36Q14 197 26 178Z', 'gold', 12, '#895f28')}
+    ${path('M110 59Q119 44 128 59L195 171Q201 183 188 183H50Q37 183 44 171Z', 'url(#navy)')}
+    ${solid('M111 86H129L126 138H114Z', 'gold', 3, '#91722d')}
+    <circle cx="120" cy="158" r="9" fill="url(#gold)"/>
+    ${line('M30 181 111 48', '#fff0c4', 2, 'opacity=".75"')}</g>`,
+  compass: `<g transform="rotate(-14 120 120)">
+    <circle cx="120" cy="125" r="82" fill="#8a662a"/><circle cx="120" cy="116" r="82" fill="url(#gold)" stroke="#ffefb8" stroke-width="2"/>
+    <circle cx="120" cy="116" r="68" fill="url(#navy)" stroke="#5b795f" stroke-width="2"/>
+    ${line('M120 56V68M120 164V176M60 116H72M168 116H180', '#e2e6c9', 3)}
+    ${line('M79 76 86 83M154 150 162 158M79 156 86 149M154 83 161 76', '#98b6a2', 2)}
+    ${solid('M148 72 127 126 92 160 111 106Z', 'mint', 5, '#163f36')}
+    ${path('M127 126 92 160 111 106 119 115Z', 'url(#ivory)')}
+    <circle cx="120" cy="116" r="9" fill="url(#gold)" stroke="#fff0c1"/>
+    ${line('M65 82Q89 45 135 49', '#fff0c7', 2, 'opacity=".8"')}</g>`,
+  receipt: `<g transform="rotate(-10 120 120)">
+    <g transform="translate(18 10) rotate(8 120 120)">${solid(sheet, 'navy', 8, '#0c2631')}</g>
+    ${solid('M66 34H155L185 65V190L171 180 157 191 142 180 127 191 112 180 97 191 82 180 66 191 51 180V49Q51 34 66 34Z', 'ivory', 9, '#6c9586')}
+    ${path('M154 35V58Q154 66 162 66H185Z', 'url(#mint)')}
+    ${path('M73 79H93V96H82Q83 104 92 107V114Q72 110 72 94ZM107 79H127V96H116Q117 104 126 107V114Q106 110 106 94Z', '#25906f')}
+    ${line('M73 133H157M73 148H146M73 163H126', '#739784', 5)}
+    ${line('M62 39H151', '#fffef6', 2)}</g>`,
 };
 
 function svg(body, width = 240, height = 240) {
@@ -108,6 +174,17 @@ const proof = `<ellipse cx="317" cy="391" rx="225" ry="27" fill="#01090d" opacit
   ${line('M172 300C139 347 241 403 353 347', '#75dbbc', 2, 'stroke-dasharray="5 8" opacity=".6"')}`;
 await writeFile('public/visuals/proof.svg', svg(proof, 640, 480));
 
+const briefing = `<ellipse cx="317" cy="395" rx="234" ry="25" fill="#02100c" opacity=".25" filter="url(#shadow)"/>
+  <ellipse cx="316" cy="260" rx="255" ry="177" fill="url(#halo)"/>
+  <path d="M119 303C162 414 484 415 541 261" fill="none" stroke="#78bc9f" stroke-width="2" stroke-dasharray="6 10" opacity=".55"/>
+  <g transform="translate(30 168) scale(.9)">${artwork.calendar}</g>
+  <g transform="translate(164 24) scale(1.55)">${artwork.checklist}</g>
+  <g transform="translate(363 162) scale(1.05)">${artwork.mail}</g>
+  <circle cx="95" cy="133" r="7" fill="url(#gold)"/><circle cx="533" cy="121" r="6" fill="url(#mint)"/>
+  ${line('M531 48V67M521 57H541', '#acdfc0', 3)}
+  <circle cx="326" cy="421" r="4" fill="#8cd7b3"/>`;
+await writeFile('public/visuals/briefing.svg', svg(briefing, 640, 480));
+
 // Simplify the same H silhouette for a favicon that survives 16px rasterization.
 const icon = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><defs><linearGradient id="m" x2=".8" y2="1"><stop stop-color="#afffe0"/><stop offset="1" stop-color="#35b692"/></linearGradient><linearGradient id="b" x2="1" y2="1"><stop stop-color="#2a4250"/><stop offset="1" stop-color="#0b171e"/></linearGradient></defs><rect x="1" y="1" width="62" height="62" rx="16" fill="url(#b)" stroke="#597c7b"/><path d="M15 16H25V30H40V16H50V51H40V39H25V51H15Z" fill="#0a322e"/><path d="M15 13H25V27H40V13H50V48H40V36H25V48H15Z" fill="url(#m)"/><path d="M33 27H40V13H50V48H40V36H33Z" fill="#f2f4e9"/></svg>\n`;
 await writeFile('app/icon.svg', icon);
@@ -129,4 +206,4 @@ pngs.forEach((png, i) => {
   offset += png.length;
 });
 await writeFile('app/favicon.ico', Buffer.concat([header, ...pngs]));
-console.log(`Generated ${Object.keys(artwork).length + 1} SVG assets, SVG favicon, 16/32/48px ICO, and 180px Apple icon.`);
+console.log(`Generated ${Object.keys(artwork).length + 2} SVG assets, SVG favicon, 16/32/48px ICO, and 180px Apple icon.`);

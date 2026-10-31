@@ -118,5 +118,10 @@
   "v": "v23",
   "change": "Production security headers on every page: a Content Security Policy scoped to what the site really loads (self, Google Fonts, `blob:`/`data:` media for the scrub video and image previews; model calls stay server-side), `frame-ancestors 'none'` plus `X-Frame-Options: DENY`, `nosniff`, a strict referrer policy and a permissions policy denying camera, microphone, location and payment. Judge: header served; walk of /, /ms, /capture, /dashboard, /versions and a business-card analysis logged zero CSP violations with the scrub clip, WebGL hero, Inter Tight and the corridor map all working.",
   "why": "A public AI demo with paid keys behind it shipped with no browser-side hardening at all."
+ },
+ {
+  "v": "v24",
+  "change": "Branded 404 across both root layouts (`app/global-not-found.tsx`, `experimental.globalNotFound`): \"This link did not survive the audit.\" with the main CTA and links back into Capture, Outcomes and the changelog, real 404 status kept. Judge: unknown URL returns 404 with the branded page at 1366 and 390 (no overflow), its \"Run a real deal\" CTA reaches the guided deal.",
+  "why": "A typo in a shared link landed on Next's unstyled \"This page could not be found\", a dead end."
  }
 ]

@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "HandshakeOS | Project description",
   description: "The problem, solution, technology and people behind HandshakeOS.",
-  alternates: { canonical: "/descrition" },
+  alternates: { canonical: "/description" },
 };
 
 const sections = [

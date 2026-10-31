@@ -34,6 +34,7 @@ export default function Nav() {
           {tab("/capture", "Capture")}
           {tab("/dashboard", "Outcomes")}
           {tab("/versions", "Versions")}
+          <span className="hidden sm:contents">{tab("/judge", "Judges")}</span>
         </nav>
         <div className="ml-auto">
           {status && (

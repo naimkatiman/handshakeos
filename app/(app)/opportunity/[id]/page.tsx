@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import AskDeal from "@/components/AskDeal";
 import { Card, EngineTag, LevelBadge, Spinner, StageTrack, btn } from "@/components/ui";
+import { Visual } from "@/components/Visual";
 import { fileToImageInput } from "@/lib/image";
 import { stageIndex } from "@/lib/funnel";
 import { SAMPLE_EVIDENCE_MEETING, SAMPLE_EVIDENCE_POC, SAMPLE_EVIDENCE_WEAK } from "@/lib/samples";
@@ -85,6 +86,7 @@ export default function OpportunityPage() {
   if (!opp)
     return (
       <div className="py-20 text-center text-muted">
+        <Visual name="capture" size={112} className="mb-4" /><br />
         Opportunity not found. <Link href="/capture" className="text-accent underline">Capture one</Link>
       </div>
     );
@@ -124,7 +126,7 @@ export default function OpportunityPage() {
 
       <div className="grid gap-5 lg:grid-cols-[1.15fr_1fr]">
         <div className="space-y-5">
-          <Card title="Opportunity">
+          <Card icon="partnership" title="Opportunity">
             <p className="text-[15px] leading-relaxed">{a.opportunity}</p>
             {a.keyTerms.length > 0 && (
               <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -159,7 +161,7 @@ export default function OpportunityPage() {
           <AskDeal opp={opp} />
 
           {opp.actions.length > 0 && (
-            <Card title="Next actions" right={<span className="num text-xs text-muted">{opp.actions.filter((x) => x.done).length}/{opp.actions.length}</span>}>
+            <Card icon="launch" title="Next actions" right={<span className="num text-xs text-muted">{opp.actions.filter((x) => x.done).length}/{opp.actions.length}</span>}>
               <ul className="divide-y divide-line">
                 {opp.actions.map((act) => (
                   <li key={act.id} className="flex gap-3 py-3 first:pt-0 last:pb-0">
@@ -192,7 +194,7 @@ export default function OpportunityPage() {
           )}
 
           {(a.evidence.length > 0 || a.commitments.length > 0) && (
-            <Card title="Source evidence" right={<span className="text-xs text-muted">Every claim, quoted</span>}>
+            <Card icon="evidence" title="Source evidence" right={<span className="text-xs text-muted">Every claim, quoted</span>}>
               <ul className="space-y-3">
                 {[...a.commitments.map((c) => ({ ...c, tag: "Commitment" })), ...a.evidence.map((c) => ({ ...c, tag: "" }))].map((c, i) => (
                   <li key={i} className="text-sm">
@@ -242,7 +244,7 @@ function FollowUp({ opp }: { opp: Opportunity }) {
   const [copied, setCopied] = useState(false);
   const msg = opp.followUp;
   return (
-    <Card title="Follow-up message" right={<span className="text-xs text-muted">Review before sending</span>}>
+    <Card icon="conversation" title="Follow-up message" right={<span className="text-xs text-muted">Review before sending</span>}>
       <textarea
         value={msg}
         onChange={(e) => store.update(opp.id, (o) => ({ ...o, followUp: e.target.value }))}
@@ -296,7 +298,7 @@ function EvidenceEngine({ opp }: { opp: Opportunity }) {
   const decide = (rec: EvidenceRecord, accept: boolean) => decideEvidence(opp, rec, accept);
 
   return (
-    <Card title="Outcome Evidence Engine" right={<span className="text-xs text-muted">Prove progress</span>}>
+    <Card icon="evidence" title="Outcome Evidence Engine" right={<span className="text-xs text-muted">Prove progress</span>}>
       {pending ? (
         <PendingReview opp={opp} rec={pending} onDecide={decide} />
       ) : (
@@ -393,7 +395,7 @@ function History({ opp }: { opp: Opportunity }) {
       .map((e) => ({ at: e.createdAt, text: e.status === "rejected" ? "Evidence rejected" : "Evidence logged", sub: e.summary, kind: "ev" as const })),
   ].sort((x, y) => y.at.localeCompare(x.at));
   return (
-    <Card title="Audit trail">
+    <Card icon="capture" title="Audit trail">
       <ol className="space-y-3">
         {items.map((it, i) => (
           <li key={i} className="flex gap-3 text-sm">

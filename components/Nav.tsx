@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BrandMark } from "@/components/Visual";
 
 export default function Nav() {
   const path = usePathname();
@@ -15,7 +16,7 @@ export default function Nav() {
     return (
       <Link
         href={href}
-        className={`rounded-md px-2 py-1.5 text-sm font-medium transition sm:px-3 ${active ? "bg-ink text-paper" : "text-muted hover:text-ink"}`}
+        className={`rounded-md px-1.5 py-1.5 text-xs font-medium transition sm:px-3 sm:text-sm ${active ? "bg-ink text-paper" : "text-muted hover:text-ink"}`}
       >
         {label}
       </Link>
@@ -24,12 +25,12 @@ export default function Nav() {
 
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-paper/90 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
+      <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4 sm:gap-3 sm:px-6">
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <span className="grid h-7 w-7 place-items-center rounded-md bg-accent text-[13px] text-accent-ink">H</span>
+          <BrandMark size={36} />
           <span className="hidden sm:inline">HandshakeOS</span>
         </Link>
-        <nav className="ml-2 flex gap-1">
+        <nav className="flex gap-1 sm:ml-2">
           {tab("/capture", "Capture")}
           {tab("/dashboard", "Outcomes")}
           {tab("/versions", "Versions")}
@@ -47,7 +48,7 @@ export default function Nav() {
               }`}
             >
               <span className={`h-1.5 w-1.5 rounded-full ${status.live ? "bg-accent" : "bg-amber"}`} />
-              {status.live ? "Gemma 4 live" : "Demo mode"}
+              <span className="sr-only min-[440px]:not-sr-only">{status.live ? "Gemma 4 live" : "Demo mode"}</span>
             </span>
           )}
         </div>

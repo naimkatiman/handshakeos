@@ -1,11 +1,12 @@
 import { STAGES, STAGE_LABEL, type EngineInfo, type EvidenceLevel, type Stage } from "@/lib/types";
+import { Visual, type VisualName } from "@/components/Visual";
 
-export function Card({ title, right, children, className = "" }: { title?: string; right?: React.ReactNode; children: React.ReactNode; className?: string }) {
+export function Card({ title, icon, right, children, className = "" }: { title?: string; icon?: VisualName; right?: React.ReactNode; children: React.ReactNode; className?: string }) {
   return (
     <section className={`rounded-xl border border-line bg-card p-4 sm:p-5 ${className}`}>
       {title && (
         <div className="mb-3 flex items-center justify-between gap-2">
-          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-muted">{title}</h2>
+          <h2 className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wider text-muted">{icon && <Visual name={icon} size={36} />}{title}</h2>
           {right}
         </div>
       )}
@@ -30,6 +31,7 @@ export function LevelBadge({ level }: { level: EvidenceLevel }) {
 
 export function StageTrack({ stage, pending }: { stage: Stage; pending?: Stage }) {
   const idx = STAGES.indexOf(stage);
+  const icons: Record<Stage, VisualName> = { introduced: "conversation", meeting: "network", poc: "launch", partnership: "partnership" };
   return (
     <ol className="grid grid-cols-4 gap-1.5">
       {STAGES.map((s, i) => {
@@ -37,6 +39,7 @@ export function StageTrack({ stage, pending }: { stage: Stage; pending?: Stage }
         const next = pending === s;
         return (
           <li key={s}>
+            <Visual name={icons[s]} size={48} className={`visual-stage ${done ? "" : "visual-stage--pending"}`} />
             <div className={`h-1.5 rounded-full ${done ? "bg-accent" : next ? "bg-amber" : "bg-line"}`} />
             <div className={`mt-1.5 text-[11px] font-medium leading-tight sm:text-xs ${done ? "text-ink" : "text-muted"}`}>
               {STAGE_LABEL[s]}

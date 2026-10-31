@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import ChaseList from "@/components/ChaseList";
 import CorridorMap, { HUBS, parseCorridor, type Corridor } from "@/components/CorridorMap";
 import { Card, btn } from "@/components/ui";
+import { Visual } from "@/components/Visual";
 import { funnel, stageIndex } from "@/lib/funnel";
 import { store, useOpportunities } from "@/lib/store";
 import { track } from "@/lib/track";
@@ -74,11 +75,14 @@ export default function Dashboard() {
   return (
     <div className="space-y-5">
       <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+        <div className="visual-heading">
+          <Visual name="outcomes" size={84} />
+          <div>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">ASEAN Partnership Funnel</h1>
           <p className="mt-1 max-w-xl text-sm text-muted">
             Only evidence-backed, human-confirmed milestones count. Drafts, proposed pilots and hearsay don&apos;t.
           </p>
+          </div>
         </div>
         {hasSeed && (
           <label className="flex items-center gap-2 text-sm">
@@ -88,14 +92,15 @@ export default function Dashboard() {
         )}
       </div>
 
-      <Card title="Chase this week" right={<span className="text-xs text-muted">Promises and deadlines from your deals</span>}>
+      <Card icon="conversation" title="Chase this week" right={<span className="text-xs text-muted">Promises and deadlines from your deals</span>}>
         <ChaseList opps={all} />
       </Card>
 
       <Card>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {STAGES.map((s) => (
+          {STAGES.map((s, i) => (
             <div key={s}>
+              <Visual name={(["conversation", "network", "launch", "partnership"] as const)[i]} size={60} className="visual-stage" />
               <div className="text-xs font-medium text-muted">{STAGE_LABEL[s]}</div>
               <div className="num mt-1 text-4xl font-semibold">{f.counts[s]}</div>
               <div className="mt-2 h-2 rounded-full bg-paper">
@@ -120,6 +125,7 @@ export default function Dashboard() {
       </Card>
 
       <Card
+        icon="network"
         title="Where deals actually move"
         right={filter ? <button className="text-xs font-medium text-accent underline" onClick={() => setFilter(null)}>Clear filter: {filter}</button> : <span className="text-xs text-muted">Pick a country to filter</span>}
       >
@@ -180,7 +186,7 @@ export default function Dashboard() {
             </table>
           </Card>
 
-          <Card title="Data">
+          <Card icon="capture" title="Data">
             <div className="flex flex-wrap gap-2">
               <button className={btn.ghost} onClick={() => download("handshakeos.csv", toCSV(opps), "text/csv")}>Export CSV</button>
               <button className={btn.ghost} onClick={() => download("handshakeos.json", JSON.stringify(all, null, 2), "application/json")}>Export JSON</button>

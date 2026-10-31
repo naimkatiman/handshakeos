@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import AuditOverlay from "@/components/AuditOverlay";
+import { Visual, type VisualName } from "@/components/Visual";
 import { Card, LevelBadge, Spinner, btn } from "@/components/ui";
 import { fileToImageInput } from "@/lib/image";
 import { SAMPLE_CARD_NOTE, SAMPLE_NOTES_EN, SAMPLE_NOTES_MS } from "@/lib/samples";
@@ -164,6 +165,7 @@ export default function CapturePage() {
   return (
     <div className="space-y-8">
       {job && <AuditOverlay text={job.text} preview={job.preview} model={model} startedAt={job.startedAt} found={found} />}
+      <div className="visual-intro">
       <div className="max-w-2xl pt-4">
         <p className="text-sm font-medium text-accent">Startup ASEAN · Outcome Conversion</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Run a real conversation.</h1>
@@ -173,16 +175,18 @@ export default function CapturePage() {
         </p>
       </div>
 
+      <Visual name="proof" size={225} className="visual-intro__art" />
+      </div>
       <div className="grid gap-3 md:grid-cols-3">
-        <SampleTile disabled={busy} onClick={() => runSample("en")} label="Meeting notes · English" tag="Guided walkthrough">
+        <SampleTile icon="capture" disabled={busy} onClick={() => runSample("en")} label="Meeting notes · English" tag="Guided walkthrough">
           <p className="line-clamp-5 font-mono text-[12.5px] leading-relaxed text-ink/80">{SAMPLE_NOTES_EN}</p>
         </SampleTile>
-        <SampleTile disabled={busy} onClick={() => runSample("ms")} label="WhatsApp note · Bahasa Melayu" tag="Johor retail">
+        <SampleTile icon="conversation" disabled={busy} onClick={() => runSample("ms")} label="WhatsApp note · Bahasa Melayu" tag="Johor retail">
           <span className="block rounded-lg rounded-tl-none bg-[#dcf8c6] px-3 py-2 shadow-sm">
             <span className="line-clamp-5 text-[13px] leading-relaxed text-[#1f2c22]">{SAMPLE_NOTES_MS}</span>
           </span>
         </SampleTile>
-        <SampleTile disabled={busy} onClick={() => runSample("card")} label="Business card · photo" tag="Image input">
+        <SampleTile icon="network" disabled={busy} onClick={() => runSample("card")} label="Business card · photo" tag="Image input">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/samples/business-card.png" alt="Sample business card" className="mx-auto h-28 -rotate-2 rounded-md object-contain shadow-[0_12px_24px_-12px_rgba(0,0,0,0.45)]" />
         </SampleTile>
@@ -243,6 +247,8 @@ export default function CapturePage() {
                 <img src={image.preview} alt="Uploaded" className="h-full w-full object-contain" />
               ) : (
                 <span className="px-4">
+                  <Visual name="capture" size={72} className="mb-2" />
+                  <br />
                   Business card, screenshot or handwritten notes
                   <br />
                   <span className="text-xs">Click or drop</span>
@@ -298,7 +304,7 @@ export default function CapturePage() {
   );
 }
 
-function SampleTile({ label, tag, onClick, disabled, children }: { label: string; tag: string; onClick: () => void; disabled?: boolean; children: React.ReactNode }) {
+function SampleTile({ icon, label, tag, onClick, disabled, children }: { icon: VisualName; label: string; tag: string; onClick: () => void; disabled?: boolean; children: React.ReactNode }) {
   return (
     <button
       type="button"
@@ -306,7 +312,8 @@ function SampleTile({ label, tag, onClick, disabled, children }: { label: string
       disabled={disabled}
       className="group flex flex-col rounded-xl border border-line bg-card p-4 text-left transition hover:-translate-y-0.5 hover:border-accent hover:shadow-[0_18px_40px_-24px_rgba(15,110,92,0.55)] disabled:opacity-50"
     >
-      <span className="mb-3 flex items-center justify-between gap-2">
+      <Visual name={icon} size={64} className="visual-sample" />
+      <span className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <span className="text-sm font-semibold">{label}</span>
         <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">{tag}</span>
       </span>

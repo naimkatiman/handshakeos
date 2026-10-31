@@ -68,6 +68,24 @@ export default function Landing() {
   useEffect(() => () => api.current?.destroy(), []);
   useEffect(() => track("landing_view"), []);
 
+  // Real counters from the anonymous event log. Hidden until there is something true to say.
+  const [stats, setStats] = useState<{ audited: number; confirmed: number; refused: number } | null>(null);
+  useEffect(() => {
+    fetch("/api/stats")
+      .then((r) => r.json())
+      .then((s: { available: boolean; audited: number; confirmed: number; refused: number }) => {
+        if (s.available && s.audited > 0) setStats(s);
+      })
+      .catch(() => {});
+  }, []);
+  const proof = stats && (
+    <p className="proof">
+      <span className="proof__dot" aria-hidden="true" />
+      Live on this site: {stats.audited} deal{stats.audited === 1 ? "" : "s"} audited by Gemma 4 · {stats.confirmed} step
+      {stats.confirmed === 1 ? "" : "s"} verified · {stats.refused} rumour{stats.refused === 1 ? "" : "s"} refused
+    </p>
+  );
+
   // The engine publishes act progress as --sc-p. Read it once per frame and quantise, so React only re-renders on a real change.
   useEffect(() => {
     let raf = 0;
@@ -138,6 +156,7 @@ export default function Landing() {
                 <a className="btn btn--accent" href={CTA_HREF} onClick={() => track("cta_click", { where: "hero" })}>{CTA}</a>
                 <a className="btn btn--ghost" href="#audit">Watch it audit a deal</a>
               </div>
+              {proof}
             </div>
             <div className="hero__chips" aria-hidden="true">
               <div className="chip chip--a" data-sc-parallax="0.22">
@@ -259,6 +278,7 @@ export default function Landing() {
                 </a>
                 <a className="close__alt" href="/capture">Paste your own notes</a>
               </div>
+              {proof}
             </div>
             <footer className="foot">
               <span>HandshakeOS · built for the Cradle Outcome Conversion challenge</span>

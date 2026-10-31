@@ -107,6 +107,13 @@ q { quotes: "\201C" "\201D"; }
   .hero__net { width: 100%; height: 62%; -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent); mask-image: linear-gradient(180deg, #000 70%, transparent); }
 }
 
+/* live proof counters (real numbers from D1) */
+.proof { display: flex; align-items: center; gap: 0.55rem; margin: 1.4rem 0 0; font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.02em; color: var(--sc-ink-soft); }
+.close__inner .proof { justify-content: center; margin-top: 1.6rem; }
+.proof__dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--sc-accent); box-shadow: 0 0 0 0 rgb(79 209 174 / 0.6); animation: proof-pulse 2.2s ease-out infinite; }
+@keyframes proof-pulse { 0% { box-shadow: 0 0 0 0 rgb(79 209 174 / 0.55); } 70%, 100% { box-shadow: 0 0 0 0.6rem rgb(79 209 174 / 0); } }
+@media (prefers-reduced-motion: reduce) { .proof__dot { animation: none; } }
+
 /* ── 2 tension ───────────────────────────────────────────────────────── */
 .tension__stage { display: grid; place-content: center; padding: 0 var(--gutter); }
 .tension__stage p {

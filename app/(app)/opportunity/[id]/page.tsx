@@ -7,6 +7,7 @@ import { fileToImageInput } from "@/lib/image";
 import { stageIndex } from "@/lib/funnel";
 import { SAMPLE_EVIDENCE_MEETING, SAMPLE_EVIDENCE_POC, SAMPLE_EVIDENCE_WEAK } from "@/lib/samples";
 import { store, uid, useOpportunity } from "@/lib/store";
+import { track } from "@/lib/track";
 import { STAGES, STAGE_LABEL, type EngineInfo, type EvidenceFinding, type EvidenceRecord, type Opportunity, type Stage } from "@/lib/types";
 
 const fmtDate = (iso?: string) =>
@@ -422,6 +423,7 @@ function ProveIt({ opp, onClose }: { opp: Opportunity; onClose: () => void }) {
     try {
       const rec = await verifyEvidence(opp, text);
       if (isTrick) setTrickId(rec.id);
+      else track("guide_verify");
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -430,6 +432,9 @@ function ProveIt({ opp, onClose }: { opp: Opportunity; onClose: () => void }) {
   }
 
   const step = !advanced ? (pending ? 2 : 1) : !trick ? 3 : trick.status === "pending" ? 4 : 5;
+  useEffect(() => {
+    if (step === 5) track("guide_done");
+  }, [step]);
   const quote = (t: string) => <blockquote className="mt-3 rounded-lg border border-white/10 bg-white/5 p-3 text-sm leading-relaxed text-white/80">{t}</blockquote>;
   const primary = "inline-flex items-center justify-center gap-2 rounded-lg bg-[#4fd1ae] px-4 py-2.5 text-sm font-semibold text-[#06231c] transition hover:brightness-110 disabled:opacity-50";
 
@@ -469,7 +474,13 @@ function ProveIt({ opp, onClose }: { opp: Opportunity; onClose: () => void }) {
             ))}
           </ul>
           <p className="mt-3 text-sm text-white/60">The model never moves a deal. You do.</p>
-          <button className={`${primary} mt-4`} onClick={() => decideEvidence(opp, pending, true)}>
+          <button
+            className={`${primary} mt-4`}
+            onClick={() => {
+              decideEvidence(opp, pending, true);
+              track("guide_confirm");
+            }}
+          >
             {target ? `Confirm: ${STAGE_LABEL[target]}` : "Log it"}
           </button>
         </div>

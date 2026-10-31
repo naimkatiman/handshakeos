@@ -5,6 +5,7 @@ import CorridorMap, { HUBS, parseCorridor, type Corridor } from "@/components/Co
 import { Card, btn } from "@/components/ui";
 import { funnel, stageIndex } from "@/lib/funnel";
 import { store, useOpportunities } from "@/lib/store";
+import { track } from "@/lib/track";
 import { STAGES, STAGE_LABEL, type Opportunity } from "@/lib/types";
 
 function download(name: string, body: string, type: string) {
@@ -29,7 +30,10 @@ export default function Dashboard() {
   const [includeSeed, setIncludeSeed] = useState(true);
   // A country ("Malaysia") or an exact corridor ("Malaysia → Singapore"); matches by substring of the corridor.
   const [filter, setFilter] = useState<string | null>(null);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    track("dashboard_view");
+  }, []);
 
   const opps = useMemo(() => (includeSeed ? all : all.filter((o) => !o.illustrative)), [all, includeSeed]);
   const f = funnel(opps);

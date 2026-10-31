@@ -5,5 +5,8 @@
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
-  "vars": { "GEMMA_MODEL": "google/gemma-4-26b-a4b-it" }
+  "vars": { "GEMMA_MODEL": "google/gemma-4-26b-a4b-it" },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "handshakeos-events", "database_id": "1029a78c-610c-4801-a739-8506c1301a5c", "migrations_dir": "migrations" }
+  ]
 }

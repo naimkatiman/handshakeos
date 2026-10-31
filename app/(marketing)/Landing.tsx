@@ -2,6 +2,7 @@
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 import HeroNetwork from "./HeroNetwork";
+import { track } from "@/lib/track";
 
 type ScrollCraftApi = { destroy: () => void };
 declare global {
@@ -65,6 +66,7 @@ export default function Landing() {
   const [p, setP] = useState(0);
 
   useEffect(() => () => api.current?.destroy(), []);
+  useEffect(() => track("landing_view"), []);
 
   // The engine publishes act progress as --sc-p. Read it once per frame and quantise, so React only re-renders on a real change.
   useEffect(() => {
@@ -84,6 +86,13 @@ export default function Landing() {
   const stamped = STAMP_AT.filter((t) => p >= t).length;
   const scanning = STAMP_AT.findIndex((t) => p >= t - SCAN && p < t);
   const funnel = stamped ? FUNNEL_AFTER[stamped - 1] : 0;
+  const peakSeen = useRef(false);
+  useEffect(() => {
+    if (stamped >= 3 && !peakSeen.current) {
+      peakSeen.current = true;
+      track("audit_peak");
+    }
+  }, [stamped]);
 
   return (
     <>
@@ -105,7 +114,7 @@ export default function Landing() {
         <nav className="bar__links">
           <a href="#audit">How it checks</a>
           <a href="/dashboard">Outcomes</a>
-          <a className="bar__cta" href={CTA_HREF}>{CTA}</a>
+          <a className="bar__cta" href={CTA_HREF} onClick={() => track("cta_click", { where: "bar" })}>{CTA}</a>
         </nav>
       </header>
 
@@ -126,7 +135,7 @@ export default function Landing() {
                 every claim against what was actually said. Your pipeline only moves when the evidence does.
               </p>
               <div className="hero__actions">
-                <a className="btn btn--accent" href={CTA_HREF}>{CTA}</a>
+                <a className="btn btn--accent" href={CTA_HREF} onClick={() => track("cta_click", { where: "hero" })}>{CTA}</a>
                 <a className="btn btn--ghost" href="#audit">Watch it audit a deal</a>
               </div>
             </div>
@@ -245,7 +254,7 @@ export default function Landing() {
               <h2 data-sc-cue="0.04" data-sc-kinetic="lines">Bring the conversation you had last night.</h2>
               <p data-sc-cue="0.08">No sign-up. The sample deal runs in one click, or paste your own.</p>
               <div className="close__actions">
-                <a className="btn btn--accent btn--lg" href={CTA_HREF} data-sc-magnet="0.26" data-sc-cue="0.04" data-sc-rise="0">
+                <a className="btn btn--accent btn--lg" href={CTA_HREF} onClick={() => track("cta_click", { where: "close" })} data-sc-magnet="0.26" data-sc-cue="0.04" data-sc-rise="0">
                   {CTA}
                 </a>
                 <a className="close__alt" href="/capture">Paste your own notes</a>

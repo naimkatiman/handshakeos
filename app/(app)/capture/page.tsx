@@ -6,6 +6,7 @@ import { Card, LevelBadge, Spinner, btn } from "@/components/ui";
 import { fileToImageInput } from "@/lib/image";
 import { SAMPLE_CARD_NOTE, SAMPLE_NOTES_EN, SAMPLE_NOTES_MS } from "@/lib/samples";
 import { store, uid, useOpportunities } from "@/lib/store";
+import { track } from "@/lib/track";
 import { STAGE_LABEL, type Analysis, type EngineInfo, type Opportunity } from "@/lib/types";
 
 type Img = { data: string; mimeType: string; preview: string } | null;
@@ -30,6 +31,7 @@ export default function CapturePage() {
 
   // One click from a sample to a finished plan. Only the English deal has the guided Prove-it follow-up.
   async function runSample(kind: "en" | "ms" | "card") {
+    track("sample_run", { kind });
     if (kind === "card") {
       const img = await fileToImageInput(await fetch("/samples/business-card.png").then((r) => r.blob()));
       setText(SAMPLE_CARD_NOTE);
@@ -57,6 +59,8 @@ export default function CapturePage() {
     setText(SAMPLE_CARD_NOTE);
     pickFile(blob);
   }
+
+  useEffect(() => track("capture_view"), []);
 
   // Deep link from the landing page: /capture?sample=en|ms|card&run=1 preloads a sample and, with run=1, analyses it.
   useEffect(() => {
@@ -99,6 +103,7 @@ export default function CapturePage() {
         engine: json.engine!,
       };
       store.add(opp);
+      track("plan_created", { mode: opp.engine.mode, guided });
       router.push(`/opportunity/${opp.id}${guided ? "?guide=1" : ""}`);
     } catch (e) {
       setError((e as Error).message);
@@ -197,7 +202,10 @@ export default function CapturePage() {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <button className={`${btn.accent} ml-auto`} disabled={busy || (!text.trim() && !image)} onClick={() => analyse()}>
+          <button className={`${btn.accent} ml-auto`} disabled={busy || (!text.trim() && !image)} onClick={() => {
+            track("own_analyse");
+            analyse();
+          }}>
             {busy ? <Spinner /> : null}
             {busy ? "Analysing…" : live === false ? "Analyse (samples only)" : "Analyse with Gemma"}
           </button>

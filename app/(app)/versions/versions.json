@@ -158,5 +158,10 @@
   "v": "v31",
   "change": "One-page ecosystem report: a \"Print report\" button on Outcomes prints the funnel, conversion rates, chase list, deals and corridor table on white paper under a dated \"HandshakeOS ecosystem report\" header, dropping the WebGL map, data controls and every button except the corridor labels. The \"deal brief\" print label is now scoped to deal pages with `main:has(#actions)`. Judge: in print media the dated header shows, map and controls are hidden, zero buttons render outside the corridor table, and the corridor names print (they had vanished because they are filter buttons).",
   "why": "Ecosystem teams, a named audience, had no way to take the funnel to their sponsors or leadership."
+ },
+ {
+  "v": "v32",
+  "change": "Corridor insight: picking a country (or corridor row) on the Outcomes map now shows what it means in numbers under the map, from confirmed stages only: deals touching it, the share that reached a confirmed meeting, and its furthest deal with a link. Judge (fresh browser): picking Philippines shows \"3 deals touching Philippines · 33% reached a confirmed meeting · Furthest: KlinikNow × Cebu Health Network · POC launched\"; no overflow at 390.",
+  "why": "Choosing a country only filtered the list; an ecosystem lead still had to count and compare by hand to answer \"how is this market doing?\"."
  }
 ]

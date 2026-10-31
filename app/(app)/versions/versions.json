@@ -113,5 +113,10 @@
   "v": "v22",
   "change": "\"Ask this deal\" on every opportunity: ask a plain question and Gemma 4 answers only from that deal's own conversation and evidence, with up to three verbatim quotes, each grounding-checked; an answer with no quote found in the source is replaced by \"The conversation does not say.\" New `/api/ask` ships with the rate limit and size caps. Judge (live Gemma): \"What will Sarah send, and when?\" answered with the exact grounded quote; \"Who has to sign off?\" and \"What is their annual revenue?\" both returned \"The conversation does not say.\"; UI answered the business-card deal's deadline in 0.9 s.",
   "why": "The plan page summarised a deal but could not answer the questions a founder actually asks before a follow-up call."
+ },
+ {
+  "v": "v23",
+  "change": "Production security headers on every page: a Content Security Policy scoped to what the site really loads (self, Google Fonts, `blob:`/`data:` media for the scrub video and image previews; model calls stay server-side), `frame-ancestors 'none'` plus `X-Frame-Options: DENY`, `nosniff`, a strict referrer policy and a permissions policy denying camera, microphone, location and payment. Judge: header served; walk of /, /ms, /capture, /dashboard, /versions and a business-card analysis logged zero CSP violations with the scrub clip, WebGL hero, Inter Tight and the corridor map all working.",
+  "why": "A public AI demo with paid keys behind it shipped with no browser-side hardening at all."
  }
 ]

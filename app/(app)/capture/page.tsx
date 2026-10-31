@@ -47,11 +47,11 @@ export default function CapturePage() {
     const notes = sample === "ms" ? SAMPLE_NOTES_MS : sample === "en" ? SAMPLE_NOTES_EN : "";
     if (!notes) return;
     setText(notes);
-    if (q.get("run") === "1") analyse(notes, null);
+    if (q.get("run") === "1") analyse(notes, null, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function analyse(input = text, img: Img = image) {
+  async function analyse(input = text, img: Img = image, guided = false) {
     setBusy(true);
     setError("");
     setStep(0);
@@ -80,7 +80,7 @@ export default function CapturePage() {
         engine: json.engine!,
       };
       store.add(opp);
-      router.push(`/opportunity/${opp.id}`);
+      router.push(`/opportunity/${opp.id}${guided ? "?guide=1" : ""}`);
     } catch (e) {
       setError((e as Error).message);
       setBusy(false);

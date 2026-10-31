@@ -19,12 +19,65 @@ function proposedAdvance(o: Opportunity, findings: EvidenceFinding[]): Stage | u
   return done.sort((a, b) => stageIndex(b.milestone) - stageIndex(a.milestone))[0].milestone;
 }
 
+/** Sends evidence to the engine and stores the result as the one pending record. */
+async function verifyEvidence(opp: Opportunity, text: string, image?: { data: string; mimeType: string } | null) {
+  const res = await fetch("/api/verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      text,
+      image: image ? { data: image.data, mimeType: image.mimeType } : undefined,
+      context: { title: opp.analysis.title, opportunity: opp.analysis.opportunity, stage: STAGE_LABEL[opp.stage] },
+    }),
+  });
+  const json = (await res.json()) as { findings: EvidenceFinding[]; summary: string; confidence: number; engine: EngineInfo; error?: string };
+  if (!res.ok) throw new Error(json.error || "Verification failed");
+  const rec: EvidenceRecord = {
+    id: uid(),
+    createdAt: new Date().toISOString(),
+    sourceText: text,
+    hadImage: !!image,
+    findings: json.findings,
+    summary: json.summary,
+    confidence: json.confidence,
+    status: "pending",
+  };
+  store.update(opp.id, (o) => ({ ...o, evidence: [rec, ...o.evidence.filter((e) => e.status !== "pending")] }));
+  return rec;
+}
+
+/** A human accepts or rejects pending evidence. Only accepted, completed, grounded evidence moves the stage. */
+function decideEvidence(opp: Opportunity, rec: EvidenceRecord, accept: boolean) {
+  const target = accept ? proposedAdvance(opp, rec.findings) : undefined;
+  const now = new Date().toISOString();
+  store.update(opp.id, (o) => {
+    const history = [...o.history];
+    if (target) {
+      // A launched POC implies a meeting happened: fill skipped stages, marked as implied.
+      for (let i = stageIndex(o.stage) + 1; i <= stageIndex(target); i++) {
+        const s = STAGES[i];
+        history.push({ stage: s, at: now, evidenceId: rec.id, note: s === target ? "Confirmed with evidence" : "Implied by later evidence" });
+      }
+    }
+    return {
+      ...o,
+      stage: target ?? o.stage,
+      history,
+      evidence: o.evidence.map((e) => (e.id === rec.id ? { ...e, status: accept ? "confirmed" : "rejected", advancedTo: target } : e)),
+    };
+  });
+}
+
 export default function OpportunityPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const opp = useOpportunity(id);
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [guide, setGuide] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+    setGuide(new URLSearchParams(window.location.search).get("guide") === "1");
+  }, []);
 
   if (!mounted) return null;
   if (!opp)
@@ -55,6 +108,8 @@ export default function OpportunityPage() {
           <EngineTag engine={opp.engine} />
         </div>
       </div>
+
+      {guide && <ProveIt opp={opp} onClose={() => setGuide(false)} />}
 
       <Card>
         <StageTrack stage={opp.stage} pending={pendingStage} />
@@ -224,28 +279,7 @@ function EvidenceEngine({ opp }: { opp: Opportunity }) {
     setBusy(true);
     setError("");
     try {
-      const res = await fetch("/api/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text,
-          image: image ? { data: image.data, mimeType: image.mimeType } : undefined,
-          context: { title: opp.analysis.title, opportunity: opp.analysis.opportunity, stage: STAGE_LABEL[opp.stage] },
-        }),
-      });
-      const json = (await res.json()) as { findings: EvidenceFinding[]; summary: string; confidence: number; engine: EngineInfo; error?: string };
-      if (!res.ok) throw new Error(json.error || "Verification failed");
-      const rec: EvidenceRecord = {
-        id: uid(),
-        createdAt: new Date().toISOString(),
-        sourceText: text,
-        hadImage: !!image,
-        findings: json.findings,
-        summary: json.summary,
-        confidence: json.confidence,
-        status: "pending",
-      };
-      store.update(opp.id, (o) => ({ ...o, evidence: [rec, ...o.evidence.filter((e) => e.status !== "pending")] }));
+      await verifyEvidence(opp, text, image);
       setText("");
       setImage(null);
     } catch (e) {
@@ -255,26 +289,7 @@ function EvidenceEngine({ opp }: { opp: Opportunity }) {
     }
   }
 
-  function decide(rec: EvidenceRecord, accept: boolean) {
-    const target = accept ? proposedAdvance(opp, rec.findings) : undefined;
-    const now = new Date().toISOString();
-    store.update(opp.id, (o) => {
-      const history = [...o.history];
-      if (target) {
-        // A launched POC implies a meeting happened: fill skipped stages, marked as implied.
-        for (let i = stageIndex(o.stage) + 1; i <= stageIndex(target); i++) {
-          const s = STAGES[i];
-          history.push({ stage: s, at: now, evidenceId: rec.id, note: s === target ? "Confirmed with evidence" : "Implied by later evidence" });
-        }
-      }
-      return {
-        ...o,
-        stage: target ?? o.stage,
-        history,
-        evidence: o.evidence.map((e) => (e.id === rec.id ? { ...e, status: accept ? "confirmed" : "rejected", advancedTo: target } : e)),
-      };
-    });
-  }
+  const decide = (rec: EvidenceRecord, accept: boolean) => decideEvidence(opp, rec, accept);
 
   return (
     <Card title="Outcome Evidence Engine" right={<span className="text-xs text-muted">Prove progress</span>}>
@@ -388,5 +403,110 @@ function History({ opp }: { opp: Opportunity }) {
         ))}
       </ol>
     </Card>
+  );
+}
+
+/** First-run guide from the landing page: verify a real reply, confirm it, then try to fool the engine with hearsay. */
+function ProveIt({ opp, onClose }: { opp: Opportunity; onClose: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [trickId, setTrickId] = useState<string | null>(null);
+  const pending = opp.evidence.find((e) => e.status === "pending");
+  const target = pending ? proposedAdvance(opp, pending.findings) : undefined;
+  const trick = trickId ? opp.evidence.find((e) => e.id === trickId) : undefined;
+  const advanced = opp.stage !== "introduced";
+
+  async function send(text: string, isTrick = false) {
+    setBusy(true);
+    setError("");
+    try {
+      const rec = await verifyEvidence(opp, text);
+      if (isTrick) setTrickId(rec.id);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const step = !advanced ? (pending ? 2 : 1) : !trick ? 3 : trick.status === "pending" ? 4 : 5;
+  const quote = (t: string) => <blockquote className="mt-3 rounded-lg border border-white/10 bg-white/5 p-3 text-sm leading-relaxed text-white/80">{t}</blockquote>;
+  const primary = "inline-flex items-center justify-center gap-2 rounded-lg bg-[#4fd1ae] px-4 py-2.5 text-sm font-semibold text-[#06231c] transition hover:brightness-110 disabled:opacity-50";
+
+  return (
+    <section aria-live="polite" className="relative overflow-hidden rounded-xl bg-[#0b0f14] p-5 text-[#f2efe8] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.6)] sm:p-6">
+      <div className="flex items-center justify-between gap-3">
+        <ol className="flex gap-1.5" aria-label={`Step ${Math.min(step, 4)} of 4`}>
+          {[1, 2, 3, 4].map((n) => (
+            <li key={n} className={`h-1.5 w-8 rounded-full ${n < step || step === 5 ? "bg-[#4fd1ae]" : n === step ? "bg-white/60" : "bg-white/15"}`} />
+          ))}
+        </ol>
+        <button onClick={onClose} className="text-xs text-white/50 hover:text-white">Skip the guide</button>
+      </div>
+
+      {step === 1 && (
+        <div className="mt-4 max-w-2xl">
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Sarah just replied. Does it prove anything?</h2>
+          {quote(SAMPLE_EVIDENCE_POC)}
+          <button className={`${primary} mt-4`} disabled={busy} onClick={() => send(SAMPLE_EVIDENCE_POC)}>
+            {busy && <Spinner />} {busy ? "Checking every claim…" : "Verify Sarah's reply"}
+          </button>
+        </div>
+      )}
+
+      {step === 2 && pending && (
+        <div className="mt-4 max-w-2xl">
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
+            {target ? <>Completed evidence. The quote is in her words.</> : <>Nothing here proves a new step.</>}
+          </h2>
+          <ul className="mt-3 space-y-2">
+            {pending.findings.map((f, i) => (
+              <li key={i} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm">
+                <span className={`font-mono text-[11px] font-semibold uppercase tracking-wider ${f.level === "completed" ? "text-[#4fd1ae]" : f.level === "committed" ? "text-[#f0b14a]" : "text-white/50"}`}>{f.level}</span>
+                <span className="font-semibold">{STAGE_LABEL[f.milestone]}</span>
+                <q className="text-white/70">{f.quote}</q>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-sm text-white/60">The model never moves a deal. You do.</p>
+          <button className={`${primary} mt-4`} onClick={() => decideEvidence(opp, pending, true)}>
+            {target ? `Confirm: ${STAGE_LABEL[target]}` : "Log it"}
+          </button>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className="mt-4 max-w-2xl">
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Verified: {STAGE_LABEL[opp.stage]}. Now try to fool it.</h2>
+          <p className="mt-2 text-sm text-white/60">Every pipeline is full of this. Send it and watch what the engine does.</p>
+          {quote(SAMPLE_EVIDENCE_WEAK)}
+          <button className={`${primary} mt-4 !bg-[#ff7a6b] !text-[#2a0d09]`} disabled={busy} onClick={() => send(SAMPLE_EVIDENCE_WEAK, true)}>
+            {busy && <Spinner />} {busy ? "Checking…" : "Send the rumour"}
+          </button>
+        </div>
+      )}
+
+      {step === 4 && trick && (
+        <div className="mt-4 max-w-2xl">
+          <h2 className="text-xl font-semibold tracking-tight text-[#ff7a6b] sm:text-2xl">Caught. A rumour does not move the deal.</h2>
+          <p className="mt-2 text-sm text-white/70">{trick.summary}</p>
+          <p className="mt-1 text-sm text-white/60">The deal stays at {STAGE_LABEL[opp.stage]}.</p>
+          <button className={`${primary} mt-4`} onClick={() => decideEvidence(opp, trick, false)}>Reject it</button>
+        </div>
+      )}
+
+      {step === 5 && (
+        <div className="mt-4 max-w-2xl">
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">That is a pipeline you can trust.</h2>
+          <p className="mt-2 text-sm text-white/60">One verified step, one rumour refused, every decision in the audit trail below.</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link href="/capture" className={primary}>Capture your own conversation</Link>
+            <Link href="/dashboard" className="inline-flex items-center rounded-lg border border-white/20 px-4 py-2.5 text-sm font-semibold hover:border-white/50">See the outcomes funnel</Link>
+          </div>
+        </div>
+      )}
+
+      {error && <p className="mt-3 rounded-lg bg-[#ff7a6b]/15 px-3 py-2 text-sm text-[#ff7a6b]">{error}</p>}
+    </section>
   );
 }

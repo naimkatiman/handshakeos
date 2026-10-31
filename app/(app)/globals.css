@@ -49,8 +49,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   html { color-scheme: light; }
   header, nav, .skip-link, .no-print, button, form, textarea, input { display: none !important; }
   main { max-width: none !important; padding: 0 !important; }
-  main::before { content: "HandshakeOS deal brief"; display: block; font: 600 11px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: #0f6e5c; margin-bottom: 8px; }
+  main:has(#actions)::before { content: "HandshakeOS deal brief"; display: block; font: 600 11px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: #0f6e5c; margin-bottom: 8px; }
   section, li { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
   .print-only { display: block !important; }
+  /* Table cells use buttons as filters (corridor names); on paper they are just the label. */
+  td button { display: inline !important; color: inherit; text-decoration: none; }
 }

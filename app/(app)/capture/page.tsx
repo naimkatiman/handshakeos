@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import AuditOverlay from "@/components/AuditOverlay";
 import { Visual, type VisualName } from "@/components/Visual";
-import { Card, LevelBadge, Spinner, btn } from "@/components/ui";
+import { Card, Spinner, btn } from "@/components/ui";
 import { fileToImageInput } from "@/lib/image";
 import { SAMPLE_CARD_NOTE, SAMPLE_NOTES_EN, SAMPLE_NOTES_MS } from "@/lib/samples";
 import { store, uid, useOpportunities } from "@/lib/store";
 import { track } from "@/lib/track";
+import { nextMove } from "@/lib/nextMove";
 import { parseWhatsApp } from "@/lib/whatsapp";
 import { STAGE_LABEL, type Analysis, type EngineInfo, type Opportunity } from "@/lib/types";
 
@@ -164,6 +165,33 @@ export default function CapturePage() {
 
   return (
     <div className="space-y-8">
+      {mine.length > 0 && (
+        <section aria-labelledby="your-deals" className="pt-4">
+          <h2 id="your-deals" className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-muted">Your deals · what to do next</h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[...mine]
+              .map((o) => ({ o, m: nextMove(o), overdue: o.actions.some((a) => !a.done && a.dueDate && a.dueDate < new Date().toISOString().slice(0, 10)) }))
+              .sort((x, y) => Number(y.overdue) - Number(x.overdue))
+              .map(({ o, m, overdue }) => (
+                <Link key={o.id} href={`/opportunity/${o.id}#${m.target}`} className="flex flex-col rounded-xl border border-line bg-card p-4 transition hover:border-accent">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="font-semibold leading-snug">{o.analysis.title}</span>
+                    {overdue ? (
+                      <span className="shrink-0 rounded-full border border-danger/30 bg-danger-soft px-2 py-0.5 text-[11px] font-semibold text-danger">Overdue</span>
+                    ) : (
+                      <span className="shrink-0 text-xs font-medium text-accent">{STAGE_LABEL[o.stage]}</span>
+                    )}
+                  </div>
+                  <div className="mt-1 text-sm text-muted">{o.analysis.corridor || o.analysis.counterparty.name}</div>
+                  <div className="mt-3 border-t border-line pt-3 text-sm">
+                    <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-accent">Next</span>
+                    <span className="ml-2 font-medium">{m.title}</span>
+                  </div>
+                </Link>
+              ))}
+          </div>
+        </section>
+      )}
       {job && <AuditOverlay text={job.text} preview={job.preview} model={model} startedAt={job.startedAt} found={found} />}
       <div className="visual-intro">
         <div className="max-w-2xl pt-4">
@@ -283,23 +311,6 @@ export default function CapturePage() {
       </Card>
       </div>
 
-      {mine.length > 0 && (
-        <div>
-          <h2 className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-muted">Your opportunities</h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {mine.map((o) => (
-              <Link key={o.id} href={`/opportunity/${o.id}`} className="rounded-xl border border-line bg-card p-4 transition hover:border-ink/30">
-                <div className="flex items-start justify-between gap-2">
-                  <span className="font-semibold leading-snug">{o.analysis.title}</span>
-                  {o.stage === "introduced" && <LevelBadge level={o.analysis.initialLevel} />}
-                </div>
-                <div className="mt-1 text-sm text-muted">{o.analysis.corridor || o.analysis.counterparty.name}</div>
-                <div className="mt-3 text-xs font-medium text-accent">{STAGE_LABEL[o.stage]}</div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

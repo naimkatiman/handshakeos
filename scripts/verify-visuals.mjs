@@ -43,6 +43,14 @@ async function inspect(route, width) {
       const copy = await page.locator('.hero__copy').boundingBox();
       assert.ok(art && copy && art.y >= copy.y + copy.height - 1, `${route}: hero art overlaps copy at ${width}px`);
     }
+    if (route === '/' || route === '/ms') {
+      const bar = await page.locator('.bar').boundingBox();
+      const eyebrow = await page.locator('.hero__copy .eyebrow').boundingBox();
+      assert.ok(bar && eyebrow && eyebrow.y >= bar.y + bar.height - 1, `${route}: navigation covers the intro at ${width}px`);
+      const heading = await page.locator('.audit__head h2').boundingBox();
+      const note = await page.locator('.audit__note').boundingBox();
+      assert.ok(heading && note && note.y >= heading.y + heading.height - 1, `${route}: audit note must sit below its heading`);
+    }
   }
   await page.screenshot({ path: path.join(output, `${baseline ? 'before' : 'after'}-${route.replaceAll('/', '') || 'landing'}-${width}.png`), fullPage: width === 390 && !['/', '/ms'].includes(route) });
   console.log(`${baseline ? 'BASELINE' : 'PASS'} ${route} at ${width}px: ${images.length} visuals, no overflow`);
@@ -82,10 +90,10 @@ try {
     await page.getByRole('button', { name: /Meeting notes/ }).click();
     await page.waitForURL('**/opportunity/**', { timeout: 70000 });
     await page.waitForLoadState('networkidle');
-    await page.getByRole('button', { name: "Verify Sarah's reply", exact: true }).click();
-    await page.getByRole('button', { name: 'Confirm: POC launched', exact: true }).click({ timeout: 70000 });
-    await page.getByRole('button', { name: 'Send the rumour', exact: true }).click();
-    await page.getByRole('button', { name: 'Reject it', exact: true }).click({ timeout: 70000 });
+    await page.getByRole('button', { name: "Verify Naim's reply", exact: true }).click();
+    await page.getByRole('button', { name: 'Confirm: POC launched', exact: true }).first().click({ timeout: 70000 });
+    await page.getByRole('button', { name: 'Send the rumour', exact: true }).first().click();
+    await page.getByRole('button', { name: 'Reject it', exact: true }).first().click({ timeout: 70000 });
     await page.getByRole('heading', { name: 'That is a pipeline you can trust.', exact: true }).waitFor();
     console.log('PASS sample analysis, evidence confirmation, and hearsay rejection');
     for (const width of [1440, 390, 320]) {
@@ -100,6 +108,9 @@ try {
     await page.goto(origin + '/dashboard', { waitUntil: 'networkidle' });
     await page.getByText('Your 1 deal only.', { exact: true }).waitFor();
     assert.equal(await page.getByRole('checkbox', { name: 'Include illustrative deals' }).isChecked(), false);
+    await page.goto(origin + '/capture', { waitUntil: 'networkidle' });
+    await page.locator('#your-deals').waitFor();
+    assert.ok(await page.locator('section[aria-labelledby="your-deals"] a[href*="#"]').count(), 'Returning visitors need a next-action link to their deal');
     console.log('PASS all nine new assets rendered, printable follow-up, and own-deal funnel');
     assert.deepEqual(errors, [], 'Browser errors');
     console.log(`PASS ${files.length} original assets, ${total} bytes total. Screenshots: ${output}`);

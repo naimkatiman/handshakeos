@@ -81,6 +81,9 @@ export default function Dashboard() {
         <div className="visual-heading">
           <Visual name="outcomes" size={84} />
           <div>
+          <p className="print-only font-mono text-[11px] font-semibold uppercase tracking-wider text-accent">
+            HandshakeOS ecosystem report · {new Date().toLocaleDateString("en-MY", { day: "numeric", month: "long", year: "numeric" })}
+          </p>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">ASEAN Partnership Funnel</h1>
           <p className="mt-1 max-w-xl text-sm text-muted">
             Only evidence-backed, human-confirmed milestones count. Drafts, proposed pilots and hearsay don&apos;t.
@@ -99,12 +102,17 @@ export default function Dashboard() {
           </p>
           </div>
         </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <button className={`${btn.ghost} no-print`} onClick={() => window.print()}>
+            Print report
+          </button>
         {hasSeed && (
-          <label className="flex items-center gap-2 text-sm">
+          <label className="no-print flex items-center gap-2 text-sm">
             <input type="checkbox" checked={includeSeed} onChange={(e) => setSeedChoice(e.target.checked)} className="h-4 w-4 accent-[var(--color-accent)]" />
             Include illustrative deals
           </label>
         )}
+        </div>
       </div>
 
       <Card icon="calendar" title="Chase this week" right={<span className="text-xs text-muted">Promises and deadlines from your deals</span>}>
@@ -141,6 +149,7 @@ export default function Dashboard() {
 
       <Card
         icon="network"
+        className="no-print"
         title="Where deals actually move"
         right={filter ? <button className="text-xs font-medium text-accent underline" onClick={() => setFilter(null)}>Clear filter: {filter}</button> : <span className="text-xs text-muted">Pick a country to filter</span>}
       >
@@ -206,7 +215,7 @@ export default function Dashboard() {
             </table>
           </Card>
 
-          <Card icon="archive" title="Data">
+          <Card icon="archive" className="no-print" title="Data">
             <div className="flex flex-wrap gap-2">
               <button className={btn.ghost} onClick={() => download("handshakeos.csv", toCSV(opps), "text/csv")}>Export CSV</button>
               <button className={btn.ghost} onClick={() => download("handshakeos.json", JSON.stringify(all, null, 2), "application/json")}>Export JSON</button>

@@ -163,5 +163,10 @@
   "v": "v32",
   "change": "Corridor insight: picking a country (or corridor row) on the Outcomes map now shows what it means in numbers under the map, from confirmed stages only: deals touching it, the share that reached a confirmed meeting, and its furthest deal with a link. Judge (fresh browser): picking Philippines shows \"3 deals touching Philippines · 33% reached a confirmed meeting · Furthest: KlinikNow × Cebu Health Network · POC launched\"; no overflow at 390.",
   "why": "Choosing a country only filtered the list; an ecosystem lead still had to count and compare by hand to answer \"how is this market doing?\"."
+ },
+ {
+  "v": "v33",
+  "change": "Judges' tour at `/judge` (and a Judges tab from tablet up): six steps, each with what to do, what to look for and a direct link (the refused rumour, the live guided deal, your own words or a WhatsApp export, asking the deal, outcomes with map, chase list and report, the changelog), plus a plain \"what is real, what is illustrative\" box covering the model and fallback, grounding, human confirmation, sample data, storage and rate limits. Judge: all six links return 200 and the `#audit` anchor exists; no overflow at 390 (tab hidden on phones); on the live model the sample's \"Who has to sign off?\" returns \"The conversation does not say.\" and \"What is the next deadline?\" returns the exact grounded quote, as the page promises.",
+  "why": "Judges have about three minutes, and the strongest proof points were spread across four pages with nothing pointing at them."
  }
 ]

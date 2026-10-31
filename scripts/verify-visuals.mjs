@@ -108,6 +108,9 @@ try {
     await page.goto(origin + '/dashboard', { waitUntil: 'networkidle' });
     await page.getByText('Your 1 deal only.', { exact: true }).waitFor();
     assert.equal(await page.getByRole('checkbox', { name: 'Include illustrative deals' }).isChecked(), false);
+    await page.getByRole('button', { name: 'Malaysia', exact: true }).first().click();
+    await page.getByText('deal touching Malaysia', { exact: true }).waitFor();
+    await page.getByRole('button', { name: 'Clear filter: Malaysia', exact: true }).click();
     await page.emulateMedia({ media: 'print' });
     assert.ok(await page.getByText(/HandshakeOS ecosystem report/).isVisible(), 'Printable ecosystem heading must be retained');
     assert.equal(await page.getByRole('button', { name: 'Print report', exact: true }).isVisible(), false, 'Print controls should not print');

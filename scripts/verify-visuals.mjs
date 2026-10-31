@@ -31,8 +31,9 @@ async function inspect(route, width) {
   assert.ok(overflow.document <= overflow.viewport, `${route} overflows at ${width}px: ${JSON.stringify(overflow)}`);
   const images = await page.locator('img[data-visual]').evaluateAll(nodes => nodes.map(img => ({ name: img.dataset.visual, src: img.getAttribute('src'), alt: img.getAttribute('alt'), loaded: img.complete && img.naturalWidth > 0 })));
   if (!baseline) {
-    const minimum = route === '/' || route === '/ms' ? 13 : route === '/versions' || route === '/__visual_missing__' ? 2 : 3;
+    const minimum = route === '/' || route === '/ms' ? 13 : route === '/judge' ? 1 : route === '/versions' || route === '/__visual_missing__' ? 2 : 3;
     assert.ok(images.length >= minimum, `Not enough visual placements on ${route}: ${images.length}`);
+    if (route === '/judge') assert.equal(await page.locator('ol > li > a').count(), 6, 'Judge guide must retain its six working step links');
     for (const img of images) {
       seenAssets.add(img.name);
       assert.ok(img.loaded, `Image failed to load: ${img.src}`);
@@ -58,7 +59,7 @@ async function inspect(route, width) {
 
 try {
   for (const width of [1440, 390, 320]) {
-    for (const route of ['/', '/ms', '/capture', '/dashboard', ...(!baseline ? ['/versions', '/__visual_missing__'] : [])]) await inspect(route, width);
+    for (const route of ['/', '/ms', '/capture', '/dashboard', ...(!baseline ? ['/versions', '/judge', '/__visual_missing__'] : [])]) await inspect(route, width);
   }
   if (baseline) {
     console.log('BASELINE: new visual placements absent; browser screenshots recorded.');

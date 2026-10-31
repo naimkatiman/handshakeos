@@ -82,17 +82,6 @@ q { quotes: "\201C" "\201D"; }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
 .hero__net { position: absolute; inset: 0 auto 0 0; z-index: 2; width: 60%; height: 100%; -webkit-mask-image: linear-gradient(90deg, #000 70%, transparent); mask-image: linear-gradient(90deg, #000 70%, transparent); pointer-events: none; opacity: 0; transition: opacity 600ms ease; }
 .hero__net[data-ready] { opacity: 1; }
-.hero__chips { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
-.chip {
-  position: absolute; display: flex; flex-direction: column; gap: 0.6rem; max-width: 19rem;
-  padding: 1rem 1.1rem; border-radius: 0.9rem;
-  background: rgb(19 26 35 / 0.72); backdrop-filter: blur(14px);
-  border: 1px solid var(--sc-hairline-strong);
-  box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.06);
-  font-size: 1rem; line-height: 1.4;
-}
-.chip .stamp { align-self: flex-start; }
-.chip--a { left: 7vw; top: 64vh; }
 /* Phones get their own composition: copy over the sky, the table with last night's card left in view below it.
    The portrait clip is already cropped onto the card; the landscape poster is positioned to match it. */
 @media (max-width: 860px) {
@@ -103,7 +92,6 @@ q { quotes: "\201C" "\201D"; }
   .hero__stage .hero__poster { object-position: 24% 50%; }
   .hero__stage .hero__clip { object-position: 50% 50%; }
   .hero__net { display: none; }
-  .chip--a { display: none; }
 }
 
 /* live proof counters (real numbers from D1) */
@@ -121,13 +109,30 @@ q { quotes: "\201C" "\201D"; }
 }
 .tension__stage .tension__turn { color: var(--sc-accent); }
 
-/* ── 3 audit (peak) ──────────────────────────────────────────────────── */
+/* ── 3 problem, then solution ────────────────────────────────────────── */
+.pitch { padding: clamp(5rem, 12vh, 8rem) var(--gutter); }
+.pitch__wrap { max-width: 72rem; margin: 0 auto; display: grid; gap: clamp(3rem, 8vh, 5.5rem); }
+.pitch h2 { margin: 0; max-width: 28em; font-size: clamp(1.55rem, 2.8vw, 2.35rem); line-height: 1.15; letter-spacing: -0.03em; font-weight: 600; text-wrap: balance; }
+.pitch p { margin: 1rem 0 0; max-width: 42rem; line-height: 1.6; color: var(--sc-ink-soft); }
+.pitch__maphead, .pitch__map > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 1rem 2rem; }
+.pitch__maphead { margin-top: 1.75rem; padding-bottom: 0.55rem; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sc-accent); }
+.pitch__map { margin: 0; }
+.pitch__map > div { padding: 0.95rem 0; border-top: 1px solid var(--sc-hairline); }
+.pitch__map > div:last-child { border-bottom: 1px solid var(--sc-hairline); }
+.pitch__map dt { margin: 0; color: var(--sc-ink-soft); }
+.pitch__map dd { margin: 0; font-weight: 600; }
+@media (max-width: 860px) {
+  .pitch__maphead, .pitch__map > div { grid-template-columns: 1fr; gap: 0.25rem; }
+}
+
+/* ── 4 audit (peak) ──────────────────────────────────────────────────── */
 .audit__stage {
   display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.9fr); grid-template-rows: auto 1fr;
   gap: 1.5rem clamp(1.5rem, 4vw, 4rem); padding: 5.5rem var(--gutter) 2rem; align-content: start;
 }
 .audit__head { grid-column: 1 / -1; }
 .audit__head h2 { margin: 0; font-size: clamp(1.6rem, 3vw, 2.6rem); line-height: 1.05; letter-spacing: -0.03em; font-weight: 600; max-width: 30ch; text-wrap: balance; }
+.audit__note { margin: 0.75rem 0 0; max-width: 40rem; color: var(--sc-ink-soft); line-height: 1.5; }
 .thread { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
 .msg {
   border: 1px solid var(--sc-hairline); border-radius: 0.85rem; padding: 0.85rem 1rem;

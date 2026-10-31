@@ -322,7 +322,7 @@ function EvidenceEngine({ opp }: { opp: Opportunity }) {
                 setImage(await fileToImageInput(f));
               }
             }}
-            placeholder="e.g. Sarah's reply confirming the pilot…"
+            placeholder="e.g. Naim's reply confirming the pilot…"
             className="h-28 w-full resize-y rounded-lg border border-line bg-paper/50 p-3 text-sm leading-relaxed outline-none focus:border-accent"
           />
           {image && (
@@ -461,10 +461,10 @@ function ProveIt({ opp, onClose }: { opp: Opportunity; onClose: () => void }) {
 
       {step === 1 && (
         <div className="mt-4 max-w-2xl">
-          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Sarah just replied. Does it prove anything?</h2>
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Naim just replied. Does it prove anything?</h2>
           {quote(SAMPLE_EVIDENCE_POC)}
           <button className={`${primary} mt-4`} disabled={busy} onClick={() => send(SAMPLE_EVIDENCE_POC)}>
-            {busy && <Spinner />} {busy ? "Checking every claim…" : "Verify Sarah's reply"}
+            {busy && <Spinner />} {busy ? "Checking every claim…" : "Verify Naim's reply"}
           </button>
         </div>
       )}
@@ -472,7 +472,7 @@ function ProveIt({ opp, onClose }: { opp: Opportunity; onClose: () => void }) {
       {step === 2 && pending && (
         <div className="mt-4 max-w-2xl">
           <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
-            {target ? <>Completed evidence. The quote is in her words.</> : <>Nothing here proves a new step.</>}
+            {target ? <>Completed evidence. The quote is in his words.</> : <>Nothing here proves a new step.</>}
           </h2>
           <ul className="mt-3 space-y-2">
             {pending.findings.map((f, i) => (

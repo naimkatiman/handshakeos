@@ -11,9 +11,9 @@ export const metadata: Metadata = {
     images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "HandshakeOS: prove the deal, not the handshake" }],
   },
   twitter: { card: "summary_large_image", images: ["/og.jpg"] },
-  title: "HandshakeOS · Prove the deal, not the handshake",
+  title: "HandshakeOS · And then, nothing happens",
   description:
-    "HandshakeOS reads your networking conversations, checks every claim against what was actually said, and only counts a partnership step when the evidence is real.",
+    "Isaac leaves a networking event with handshakes and no date. HandshakeOS turns the conversation into an opportunity, then counts a step only when the evidence is real.",
 };
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {

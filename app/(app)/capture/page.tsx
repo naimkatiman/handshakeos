@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card, LevelBadge, Spinner, btn } from "@/components/ui";
 import { fileToImageInput } from "@/lib/image";
 import { SAMPLE_NOTES_EN, SAMPLE_NOTES_MS } from "@/lib/samples";
@@ -39,7 +39,19 @@ export default function CapturePage() {
     pickFile(blob);
   }
 
-  async function analyse() {
+  // Deep link from the landing page: /capture?sample=en|ms|card&run=1 preloads a sample and, with run=1, analyses it.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const sample = q.get("sample");
+    if (sample === "card") return void loadCard();
+    const notes = sample === "ms" ? SAMPLE_NOTES_MS : sample === "en" ? SAMPLE_NOTES_EN : "";
+    if (!notes) return;
+    setText(notes);
+    if (q.get("run") === "1") analyse(notes, null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function analyse(input = text, img: Img = image) {
     setBusy(true);
     setError("");
     setStep(0);
@@ -48,7 +60,7 @@ export default function CapturePage() {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, image: image ? { data: image.data, mimeType: image.mimeType } : undefined }),
+        body: JSON.stringify({ text: input, image: img ? { data: img.data, mimeType: img.mimeType } : undefined }),
       });
       const json = (await res.json()) as { analysis?: Analysis; engine?: EngineInfo; error?: string };
       if (!res.ok || !json.analysis) throw new Error(json.error || "Analysis failed");
@@ -58,7 +70,7 @@ export default function CapturePage() {
         id: uid(),
         createdAt: now,
         updatedAt: now,
-        sourceText: [text, a.transcript ? `[Image text]\n${a.transcript}` : ""].filter(Boolean).join("\n\n"),
+        sourceText: [input, a.transcript ? `[Image text]\n${a.transcript}` : ""].filter(Boolean).join("\n\n"),
         analysis: a,
         actions: a.actions.map((x) => ({ ...x, id: uid(), done: false })),
         followUp: a.followUp,
@@ -157,7 +169,7 @@ export default function CapturePage() {
           <button className={btn.chip} onClick={loadCard}>
             Business card (image)
           </button>
-          <button className={`${btn.accent} ml-auto`} disabled={busy || (!text.trim() && !image)} onClick={analyse}>
+          <button className={`${btn.accent} ml-auto`} disabled={busy || (!text.trim() && !image)} onClick={() => analyse()}>
             {busy ? <Spinner /> : null}
             {busy ? "Analysing…" : "Analyse with Gemma"}
           </button>

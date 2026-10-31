@@ -30,7 +30,7 @@ export default function OpportunityPage() {
   if (!opp)
     return (
       <div className="py-20 text-center text-muted">
-        Opportunity not found. <Link href="/" className="text-accent underline">Capture one</Link>
+        Opportunity not found. <Link href="/capture" className="text-accent underline">Capture one</Link>
       </div>
     );
 
@@ -43,7 +43,7 @@ export default function OpportunityPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <Link href="/" className="text-sm text-muted hover:text-ink">← Capture</Link>
+          <Link href="/capture" className="text-sm text-muted hover:text-ink">← Capture</Link>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">{a.title}</h1>
           <p className="mt-1 text-muted">
             {[a.corridor, a.sector].filter(Boolean).join(" · ")}
@@ -167,7 +167,7 @@ export default function OpportunityPage() {
             onClick={() => {
               if (confirm("Delete this opportunity?")) {
                 store.remove(opp.id);
-                router.push("/");
+                router.push("/capture");
               }
             }}
           >

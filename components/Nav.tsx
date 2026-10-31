@@ -11,7 +11,7 @@ export default function Nav() {
   }, []);
 
   const tab = (href: string, label: string) => {
-    const active = href === "/" ? path === "/" || path.startsWith("/opportunity") : path.startsWith(href);
+    const active = href === "/capture" ? path === "/capture" || path.startsWith("/opportunity") : path.startsWith(href);
     return (
       <Link
         href={href}
@@ -30,7 +30,7 @@ export default function Nav() {
           <span className="hidden sm:inline">HandshakeOS</span>
         </Link>
         <nav className="ml-2 flex gap-1">
-          {tab("/", "Capture")}
+          {tab("/capture", "Capture")}
           {tab("/dashboard", "Outcomes")}
         </nav>
         <div className="ml-auto">

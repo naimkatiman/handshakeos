@@ -39,7 +39,7 @@ export default function AskDeal({ opp }: { opp: Opportunity }) {
 
   if (!source.trim()) return null;
   return (
-    <Card title="Ask this deal" right={<span className="text-xs text-muted">Answers only from what was said</span>}>
+    <Card className="no-print" title="Ask this deal" right={<span className="text-xs text-muted">Answers only from what was said</span>}>
       <form
         className="flex gap-2"
         onSubmit={(e) => {

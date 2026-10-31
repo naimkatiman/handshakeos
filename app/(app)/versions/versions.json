@@ -128,5 +128,10 @@
   "v": "v25",
   "change": "Keyboard access across the app pages: a \"Skip to content\" link as the first Tab stop (jumps to `#main`), and one teal focus ring on every link, button and field via `:focus-visible`, so keyboard users see where they are and mouse users see nothing extra. Judge: first Tab reveals the skip link at the top, Enter moves focus to main, the next Tab lands on the first sample tile with a 2px `rgb(79, 209, 174)` ring, and Enter on it starts the live analysis.",
   "why": "Tabbing through the app showed no visible focus and walked through the whole nav on every page."
+ },
+ {
+  "v": "v26",
+  "change": "Printable deal brief: a \"Print brief\" button on every opportunity and a print stylesheet that turns the dark page into a white one-deal brief (light palette, \"HandshakeOS deal brief\" header), keeps the funnel, actions, every quoted claim, risks, the follow-up message as text and the audit trail, and drops navigation, the guide, buttons, links, the Ask card and an empty evidence form. Judge: in print media no buttons or links render, the follow-up text prints, the empty Evidence Engine card and back link are gone; screen view unchanged.",
+  "why": "Founders forward a plan to a co-founder or bring it to the follow-up call; printing the dark app gave a wasteful page of controls."
  }
 ]

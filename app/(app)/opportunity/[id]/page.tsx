@@ -100,7 +100,7 @@ export default function OpportunityPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <Link href="/capture" className="text-sm text-muted hover:text-ink">← Capture</Link>
+          <Link href="/capture" className="no-print text-sm text-muted hover:text-ink">← Capture</Link>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">{a.title}</h1>
           <p className="mt-1 text-muted">
             {[a.corridor, a.sector].filter(Boolean).join(" · ")}
@@ -110,6 +110,9 @@ export default function OpportunityPage() {
         <div className="flex items-center gap-2">
           {opp.stage === "introduced" && <LevelBadge level={a.initialLevel} />}
           <EngineTag engine={opp.engine} />
+          <button className={`${btn.ghost} no-print`} onClick={() => window.print()}>
+            Print brief
+          </button>
         </div>
       </div>
 
@@ -250,7 +253,9 @@ function FollowUp({ opp }: { opp: Opportunity }) {
         onChange={(e) => store.update(opp.id, (o) => ({ ...o, followUp: e.target.value }))}
         className="h-36 w-full resize-y rounded-lg border border-line bg-paper/50 p-3 text-[15px] leading-relaxed outline-none focus:border-accent"
       />
-      <div className="mt-3 flex flex-wrap gap-2">
+      {/* Paper copy of the message: the textarea is dropped in print. */}
+      <p className="print-only whitespace-pre-line text-[15px] leading-relaxed">{msg}</p>
+      <div className="no-print mt-3 flex flex-wrap gap-2">
         <button
           className={btn.primary}
           onClick={async () => {
@@ -268,7 +273,7 @@ function FollowUp({ opp }: { opp: Opportunity }) {
           Email
         </a>
       </div>
-      <p className="mt-2 text-xs text-muted">HandshakeOS never sends anything on its own. You stay in control.</p>
+      <p className="no-print mt-2 text-xs text-muted">HandshakeOS never sends anything on its own. You stay in control.</p>
     </Card>
   );
 }
@@ -298,7 +303,7 @@ function EvidenceEngine({ opp }: { opp: Opportunity }) {
   const decide = (rec: EvidenceRecord, accept: boolean) => decideEvidence(opp, rec, accept);
 
   return (
-    <Card icon="evidence" title="Outcome Evidence Engine" right={<span className="text-xs text-muted">Prove progress</span>}>
+    <Card icon="evidence" className={pending ? "" : "no-print"} title="Outcome Evidence Engine" right={<span className="text-xs text-muted">Prove progress</span>}>
       {pending ? (
         <PendingReview opp={opp} rec={pending} onDecide={decide} />
       ) : (
@@ -444,7 +449,7 @@ function ProveIt({ opp, onClose }: { opp: Opportunity; onClose: () => void }) {
   const primary = "inline-flex items-center justify-center gap-2 rounded-lg bg-[#4fd1ae] px-4 py-2.5 text-sm font-semibold text-[#06231c] transition hover:brightness-110 disabled:opacity-50";
 
   return (
-    <section aria-live="polite" className="relative overflow-hidden rounded-xl border border-[#4fd1ae]/25 bg-[#0f1d22] p-5 text-[#f2efe8] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.6)] sm:p-6">
+    <section aria-live="polite" className="no-print relative overflow-hidden rounded-xl border border-[#4fd1ae]/25 bg-[#0f1d22] p-5 text-[#f2efe8] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.6)] sm:p-6">
       <div className="flex items-center justify-between gap-3">
         <ol className="flex gap-1.5" aria-label={`Step ${Math.min(step, 4)} of 4`}>
           {[1, 2, 3, 4].map((n) => (

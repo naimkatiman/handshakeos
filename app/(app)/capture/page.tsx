@@ -174,10 +174,10 @@ export default function CapturePage() {
             steps, and every claim is checked against what was actually said.
           </p>
         </div>
-        <Visual name="proof" size={225} className="visual-intro__art" />
+        <Visual name="briefing" size={225} className="visual-intro__art visual-intro__art--briefing" />
       </div>
       <div className="grid gap-3 md:grid-cols-3">
-        <SampleTile icon="capture" disabled={busy} onClick={() => runSample("en")} label="Meeting notes · English" tag="Guided walkthrough">
+        <SampleTile icon="receipt" disabled={busy} onClick={() => runSample("en")} label="Meeting notes · English" tag="Guided walkthrough">
           <p className="line-clamp-5 font-mono text-[12.5px] leading-relaxed text-ink/80">{SAMPLE_NOTES_EN}</p>
         </SampleTile>
         <SampleTile icon="conversation" disabled={busy} onClick={() => runSample("ms")} label="WhatsApp note · Bahasa Melayu" tag="Johor retail">
@@ -265,6 +265,7 @@ export default function CapturePage() {
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <button type="button" className={btn.ghost} onClick={() => chatRef.current?.click()}>
+            <Visual name="archive" size={24} />
             Import WhatsApp chat (.txt)
           </button>
           <input ref={chatRef} type="file" accept=".txt,text/plain" hidden onChange={(e) => importChat(e.target.files?.[0])} />

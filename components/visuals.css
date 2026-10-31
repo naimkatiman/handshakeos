@@ -1,6 +1,6 @@
 /* Shared original artwork. No canvas, animation loop, or additional font. */
 .visual { display: inline-block; flex: none; width: var(--visual-size); height: var(--visual-size); max-width: 100%; object-fit: contain; vertical-align: middle; user-select: none; }
-.visual[data-visual="proof"] { width: calc(var(--visual-size) * 4 / 3); }
+.visual[data-visual="proof"], .visual[data-visual="briefing"] { width: calc(var(--visual-size) * 4 / 3); }
 .visual--brand { filter: drop-shadow(0 3px 5px rgb(0 0 0 / 0.12)); }
 .visual-heading { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
 .visual-heading > div { min-width: 0; }
@@ -10,6 +10,10 @@
 button:hover .visual-sample { transform: translateY(-3px) rotate(-3deg); }
 .visual-stage { display: block; margin-bottom: 0.25rem; }
 .visual-stage--pending { opacity: 0.38; filter: grayscale(1); }
+.visual-empty { display: flex; align-items: center; gap: 1rem; padding: 0.25rem 0; }
+.visual-empty > p { flex: 1; min-width: 0; }
+.visual-empty-art { display: block; margin: 1rem auto; }
+.visual-not-found { display: block; margin: 0 0 0.75rem -0.75rem; }
 .hero__artifact { position: absolute; z-index: 3; left: 3%; top: 43%; translate: 0 -50%; width: min(44vw, 40rem) !important; height: auto; filter: drop-shadow(0 25px 40px rgb(0 0 0 / 0.28)); pointer-events: none; }
 .hero__artifact-halo { position: absolute; z-index: 2; left: 0; top: 7%; width: 48%; height: 79%; background: radial-gradient(ellipse, rgb(11 23 28 / 0.8), transparent 70%); pointer-events: none; }
 .audit__head { display: flex; gap: 0.75rem; align-items: center; }
@@ -37,6 +41,9 @@ button:hover .visual-sample { transform: translateY(-3px) rotate(-3deg); }
 @media (max-width: 640px) {
   .visual-intro { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .visual-intro__art { display: none; }
+  .visual-intro__art--briefing { display: block; justify-self: center; width: 12rem !important; max-height: 9rem; margin: 0.5rem 0 0; }
+  .visual-empty > .visual { width: 3.75rem; height: 3.75rem; }
+  .visual-not-found { width: 7rem; height: 7rem; }
   .visual-heading > .visual { width: 3.5rem; height: 3.5rem; }
   .audit__head { gap: 0.5rem; }
   .audit__head .visual { width: 3rem; height: 3rem; }

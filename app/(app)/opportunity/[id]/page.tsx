@@ -164,7 +164,7 @@ export default function OpportunityPage() {
           <AskDeal opp={opp} />
 
           {opp.actions.length > 0 && (
-            <Card icon="launch" title="Next actions" right={<span className="num text-xs text-muted">{opp.actions.filter((x) => x.done).length}/{opp.actions.length}</span>}>
+            <Card icon="checklist" title="Next actions" right={<span className="num text-xs text-muted">{opp.actions.filter((x) => x.done).length}/{opp.actions.length}</span>}>
               <ul className="divide-y divide-line">
                 {opp.actions.map((act) => (
                   <li key={act.id} className="flex gap-3 py-3 first:pt-0 last:pb-0">
@@ -197,7 +197,7 @@ export default function OpportunityPage() {
           )}
 
           {(a.evidence.length > 0 || a.commitments.length > 0) && (
-            <Card icon="evidence" title="Source evidence" right={<span className="text-xs text-muted">Every claim, quoted</span>}>
+            <Card icon="receipt" title="Source evidence" right={<span className="text-xs text-muted">Every claim, quoted</span>}>
               <ul className="space-y-3">
                 {[...a.commitments.map((c) => ({ ...c, tag: "Commitment" })), ...a.evidence.map((c) => ({ ...c, tag: "" }))].map((c, i) => (
                   <li key={i} className="text-sm">
@@ -214,7 +214,7 @@ export default function OpportunityPage() {
               </ul>
               {!!a.risks?.length && (
                 <div className="mt-4 rounded-lg bg-amber-soft p-3 text-sm">
-                  <div className="mb-1 font-semibold text-amber">What could stall this</div>
+                  <div className="mb-1 flex items-center gap-2 font-semibold text-amber"><Visual name="alert" size={36} />What could stall this</div>
                   <ul className="list-disc space-y-0.5 pl-5">{a.risks.map((r) => <li key={r}>{r}</li>)}</ul>
                 </div>
               )}
@@ -247,7 +247,7 @@ function FollowUp({ opp }: { opp: Opportunity }) {
   const [copied, setCopied] = useState(false);
   const msg = opp.followUp;
   return (
-    <Card icon="conversation" title="Follow-up message" right={<span className="text-xs text-muted">Review before sending</span>}>
+    <Card icon="mail" title="Follow-up message" right={<span className="text-xs text-muted">Review before sending</span>}>
       <textarea
         value={msg}
         onChange={(e) => store.update(opp.id, (o) => ({ ...o, followUp: e.target.value }))}
@@ -400,7 +400,7 @@ function History({ opp }: { opp: Opportunity }) {
       .map((e) => ({ at: e.createdAt, text: e.status === "rejected" ? "Evidence rejected" : "Evidence logged", sub: e.summary, kind: "ev" as const })),
   ].sort((x, y) => y.at.localeCompare(x.at));
   return (
-    <Card icon="capture" title="Audit trail">
+    <Card icon="archive" title="Audit trail">
       <ol className="space-y-3">
         {items.map((it, i) => (
           <li key={i} className="flex gap-3 text-sm">

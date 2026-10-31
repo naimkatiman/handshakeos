@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./(app)/globals.css";
+import "@/components/visuals.css";
+import { BrandMark, Visual } from "@/components/Visual";
 
 export const metadata: Metadata = {
   title: "HandshakeOS · Not found",
@@ -17,6 +19,8 @@ export default function GlobalNotFound() {
       </head>
       <body className="grid min-h-screen place-items-center px-4">
         <main className="w-full max-w-xl py-16">
+          <a href="/" aria-label="HandshakeOS home" className="mb-6 inline-flex items-center gap-2 font-semibold"><BrandMark size={36} />HandshakeOS</a>
+          <Visual name="compass" size={144} className="visual-not-found" />
           <p className="font-mono text-xs font-semibold uppercase tracking-wider text-danger">404 · Not found in the source</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">This link did not survive the audit.</h1>
           <p className="mt-4 text-muted">

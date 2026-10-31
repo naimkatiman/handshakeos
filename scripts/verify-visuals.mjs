@@ -13,6 +13,8 @@ await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ headless: true, ...(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {}) });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
 const errors = [];
+const seenAssets = new Set();
+const expansionAssets = ['mail', 'checklist', 'calendar', 'search', 'archive', 'alert', 'compass', 'receipt', 'briefing'];
 page.on('pageerror', error => errors.push(error.message));
 page.on('response', response => {
   if (response.url().includes('/visuals/') && ![200, 304].includes(response.status())) errors.push(`Asset HTTP ${response.status()}: ${response.url()}`);
@@ -20,17 +22,19 @@ page.on('response', response => {
 
 async function inspect(route, width) {
   await page.setViewportSize({ width, height: width < 500 ? 844 : 1000 });
-  await page.goto(origin + route, { waitUntil: 'networkidle' });
+  const response = await page.goto(origin + route, { waitUntil: 'networkidle' });
+  assert.equal(response.status(), route === '/__visual_missing__' ? 404 : 200, `${route}: HTTP status`);
   await page.locator('h1').waitFor();
   if (!baseline) assert.equal(await page.getByRole('link', { name: 'HandshakeOS home', exact: true }).count(), 1, 'Logo needs an accessible name');
   await page.locator('img[data-visual]').evaluateAll(images => Promise.all(images.map(img => img.decode())));
   const overflow = await page.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth }));
   assert.ok(overflow.document <= overflow.viewport, `${route} overflows at ${width}px: ${JSON.stringify(overflow)}`);
-  const images = await page.locator('img[data-visual]').evaluateAll(nodes => nodes.map(img => ({ src: img.getAttribute('src'), alt: img.getAttribute('alt'), loaded: img.complete && img.naturalWidth > 0 })));
+  const images = await page.locator('img[data-visual]').evaluateAll(nodes => nodes.map(img => ({ name: img.dataset.visual, src: img.getAttribute('src'), alt: img.getAttribute('alt'), loaded: img.complete && img.naturalWidth > 0 })));
   if (!baseline) {
-    const minimum = route === '/' || route === '/ms' ? 13 : route === '/versions' ? 2 : 3;
+    const minimum = route === '/' || route === '/ms' ? 13 : route === '/versions' || route === '/__visual_missing__' ? 2 : 3;
     assert.ok(images.length >= minimum, `Not enough visual placements on ${route}: ${images.length}`);
     for (const img of images) {
+      seenAssets.add(img.name);
       assert.ok(img.loaded, `Image failed to load: ${img.src}`);
       assert.equal(img.alt, '', `Decorative image needs empty alt: ${img.src}`);
     }
@@ -40,19 +44,19 @@ async function inspect(route, width) {
       assert.ok(art && copy && art.y >= copy.y + copy.height - 1, `${route}: hero art overlaps copy at ${width}px`);
     }
   }
-  await page.screenshot({ path: path.join(output, `${baseline ? 'before' : 'after'}-${route.replaceAll('/', '') || 'landing'}-${width}.png`) });
+  await page.screenshot({ path: path.join(output, `${baseline ? 'before' : 'after'}-${route.replaceAll('/', '') || 'landing'}-${width}.png`), fullPage: width === 390 && !['/', '/ms'].includes(route) });
   console.log(`${baseline ? 'BASELINE' : 'PASS'} ${route} at ${width}px: ${images.length} visuals, no overflow`);
 }
 
 try {
   for (const width of [1440, 390, 320]) {
-    for (const route of ['/', '/ms', '/capture', '/dashboard', ...(!baseline ? ['/versions'] : [])]) await inspect(route, width);
+    for (const route of ['/', '/ms', '/capture', '/dashboard', ...(!baseline ? ['/versions', '/__visual_missing__'] : [])]) await inspect(route, width);
   }
   if (baseline) {
     console.log('BASELINE: new visual placements absent; browser screenshots recorded.');
   } else {
     const files = (await readdir('public/visuals')).filter(file => file.endsWith('.svg'));
-    assert.ok(files.length >= 8, `Expected at least eight assets; got ${files.length}`);
+    assert.ok(files.length >= 18, `Expected at least eighteen assets; got ${files.length}`);
     let total = 0;
     for (const file of files) {
       const bytes = (await stat(path.join('public/visuals', file))).size;
@@ -88,6 +92,15 @@ try {
       const route = new URL(page.url()).pathname;
       await inspect(route, width);
     }
+    for (const name of expansionAssets) assert.ok(seenAssets.has(name), `New artwork was never rendered: ${name}`);
+    await page.emulateMedia({ media: 'print' });
+    assert.ok(await page.locator('.print-only').isVisible(), 'Follow-up text must remain printable');
+    assert.equal(await page.locator('button, textarea, input').evaluateAll(nodes => nodes.filter(node => node.getClientRects().length).length), 0, 'Print view should hide controls');
+    await page.emulateMedia({ media: 'screen' });
+    await page.goto(origin + '/dashboard', { waitUntil: 'networkidle' });
+    await page.getByText('Your 1 deal only.', { exact: true }).waitFor();
+    assert.equal(await page.getByRole('checkbox', { name: 'Include illustrative deals' }).isChecked(), false);
+    console.log('PASS all nine new assets rendered, printable follow-up, and own-deal funnel');
     assert.deepEqual(errors, [], 'Browser errors');
     console.log(`PASS ${files.length} original assets, ${total} bytes total. Screenshots: ${output}`);
   }

@@ -232,14 +232,14 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
         <section className="rules" data-sc-act="flow" data-sc-drift="#f2efe8">
           <div className="rules__wrap">
             <div className="rules__lead" data-sc-in>
-              <Visual name="partnership" size={152} className="rules__art" />
+              <Visual name="search" size={152} className="rules__art" />
               <h2>{t.rulesHead}</h2>
               <p>{t.rulesBody}</p>
             </div>
             <dl className="levels" data-sc-in data-sc-stagger="90">
               {t.levels.map((l, i) => (
                 <div key={l.tag}>
-                  <dt><Visual name={(["conversation", "partnership", "evidence", "network"] as const)[i]} size={72} /><span className={`stamp stamp--${l.kind}`}>{l.tag}</span></dt>
+                  <dt><Visual name={(["conversation", "calendar", "evidence", "network"] as const)[i]} size={72} /><span className={`stamp stamp--${l.kind}`}>{l.tag}</span></dt>
                   <dd><q>{l.quote}</q> {l.text}</dd>
                 </div>
               ))}
@@ -251,7 +251,7 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
         <section id="start" data-sc-act="pin" data-sc-span="1.1" data-sc-drift="#0b0f14" className="close">
           <div data-sc-stage className="close__stage" data-sc-spotlight>
             <div className="close__inner">
-              <Visual name="brand" size={84} className="close__brand" />
+              <Visual name="mail" size={84} className="close__brand" />
               <h2 data-sc-cue="0.04" data-sc-kinetic="lines">{t.closeHead}</h2>
               <p data-sc-cue="0.08">{t.closeBody}</p>
               <div className="close__actions">

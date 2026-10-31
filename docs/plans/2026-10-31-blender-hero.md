@@ -49,3 +49,17 @@ Verified 2026-10-31:
 - All 41 scene objects return to their initial transform at frame 145, with maximum numeric delta 8.55e-18.
 - Reproduce assets with: blender -b --python scripts/render-handshake-hero.py (FFmpeg on PATH). Add -- --preview to render only the poster.
 - Original root checkout and production deployment were not changed. Preview: http://127.0.0.1:3165.
+
+Production release authorized on 2026-10-31: "go commit and dploy".
+
+The release branch starts at 9704533, which contains current main 9bf33fe plus the already-live v33 judge page. Preserve the current KitaKantin pitch, description page, dataset, country conversion details, and short-phone navigation spacing while applying only the Blender hero changes. The first development preview was based on older main and is not the release baseline. Production preflight found Worker 01954467-81fb-4164-a156-7cd655ae1776 serving v33 and the judge page; bindings and model variables are unchanged. No migrations belong to this release.
+
+Release gates: run the hero regression and existing visual/user-flow checks against the combined source, push the release branch, inspect and merge its exact PR head, package from the merged source, deploy with --keep-vars, and verify live asset hashes, playback and preserved routes. Record the provider receipt separately from the source commit.
+
+Combined candidate verification passed: production build and typecheck, all 14 hero viewport cases and fallback modes, the existing 21-case visual suite with the Naim evidence flow and print/returning-visitor checks, and the release smoke checks for security headers, keyboard focus, branded 404, validation routes and all 18 original asset hashes. Conflict resolution retained current main copy and narrow-screen spacing; no production configuration or migration was changed.
+
+Main advanced to 57d427c during verification. It was merged into the release branch before publication, retaining the corrected /description route and expanded judge/country checks. Stale generated Next.js types initially referenced /descrition; rebuilding regenerated them and the subsequent typecheck passed. Independent source review confirmed current main behavior was preserved. Production baseline after the parallel release is Worker 462729eb-071b-45c0-9aaa-a9c586f389d2; its binding fingerprint matches the earlier preflight.
+
+The expanded country-filter regression initially ran against a local server that inherited a model API key, so the result was not the expected fixture. The local server was restarted with model credentials removed from that child process. Production credentials were not touched. Repeatable workflow verification uses this explicit fixture mode.
+
+Final combined checks passed: 14 hero viewport cases, 24 existing route/viewport cases, the complete Naim evidence walkthrough, country filtering, both print views, returning-visitor links, and the approved /description content at three widths. The local status endpoint confirmed live=false during the fixture-based workflow run. Existing security-header, keyboard, API-validation and asset-hash checks passed. All tests ran against the combined production build; no new dependencies or migrations were introduced.

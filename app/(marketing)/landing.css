@@ -97,15 +97,17 @@ q { quotes: "\201C" "\201D"; }
 }
 .chip .stamp { align-self: flex-start; }
 .chip--a { left: 7vw; top: 64vh; }
-.chip--b { left: 9vw; top: 52vh; }
-.chip--b q { text-decoration: line-through; text-decoration-color: var(--danger); color: var(--sc-ink-soft); }
+/* Phones get their own composition: copy over the sky, the table with last night's card left in view below it.
+   The portrait clip is already cropped onto the card; the landscape poster is positioned to match it. */
 @media (max-width: 860px) {
-  .hero__scrim { background: linear-gradient(0deg, rgb(11 15 20 / 0.97) 0%, rgb(11 15 20 / 0.86) 48%, rgb(11 15 20 / 0.1) 75%); }
-  .hero__copy { top: auto; bottom: clamp(1.5rem, 6vh, 3rem); translate: none; right: auto; left: var(--gutter); }
-  .hero__stage .hero__media { object-position: 38% 50%; }
+  .hero__scrim { background: linear-gradient(180deg, rgb(11 15 20 / 0.96) 0%, rgb(11 15 20 / 0.82) 50%, rgb(11 15 20 / 0) 68%); }
+  .hero__copy { top: 5.6rem; bottom: auto; translate: none; right: auto; left: var(--gutter); }
+  .hero__lede { font-size: 0.95rem; margin-top: 1rem; }
+  .hero__actions { margin-top: 1.25rem; }
+  .hero__stage .hero__poster { object-position: 24% 50%; }
+  .hero__stage .hero__clip { object-position: 50% 50%; }
+  .hero__net { display: none; }
   .chip--a { display: none; }
-  .chip--b { display: none; }
-  .hero__net { width: 100%; height: 62%; -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent); mask-image: linear-gradient(180deg, #000 70%, transparent); }
 }
 
 /* live proof counters (real numbers from D1) */

@@ -133,8 +133,8 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
         <section data-sc-act="scrub" data-sc-span="1.6" data-sc-dwell="0.3" data-sc-drift="#0b0f14" className="hero">
           <div data-sc-stage className="hero__stage">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="sc-stage__poster hero__media" src="/landing/hero-plate.jpg" alt="" />
-            <video className="hero__media" data-sc-scrub data-sc-src="/landing/hero-dolly.mp4" data-sc-src-mobile="/landing/hero-dolly-m.mp4" muted playsInline />
+            <img className="sc-stage__poster hero__media hero__poster" src="/landing/hero-plate.jpg" alt="" />
+            <video className="hero__media hero__clip" data-sc-scrub data-sc-src="/landing/hero-dolly.mp4" data-sc-src-mobile="/landing/hero-dolly-portrait.mp4" muted playsInline />
             <div className="hero__scrim" aria-hidden="true" />
             <HeroNetwork />
             <div className="hero__copy" data-sc-cue="0 0.7 0">

@@ -6,7 +6,7 @@ HandshakeOS turns networking conversations into verified partnership outcomes fo
 
 Built for the Cradle **Outcome Conversion** challenge.
 
-**Pitch video (2:26):** [assets/video/handshakeos-pitch.mp4](assets/video/handshakeos-pitch.mp4) · **Live demo:** <https://handshakeos.m-naim.workers.dev>
+**Pitch video (2:27):** [assets/video/handshakeos-pitch.mp4](assets/video/handshakeos-pitch.mp4) · **Live demo:** <https://handshakeos.m-naim.workers.dev>
 
 ## The flow
 

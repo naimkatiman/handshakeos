@@ -2,6 +2,7 @@
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 import HeroNetwork from "./HeroNetwork";
+import { BrandMark, Visual } from "@/components/Visual";
 import { track } from "@/lib/track";
 import { COPY, type Lang } from "./copy";
 
@@ -120,7 +121,7 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
 
       <header className="bar">
         <a href="/" className="bar__mark" aria-label="HandshakeOS home">
-          <span className="bar__logo">H</span>
+          <BrandMark size={36} />
           HandshakeOS
         </a>
         <nav className="bar__links">
@@ -140,6 +141,8 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
             <video className="hero__media hero__clip" data-sc-scrub data-sc-src="/landing/hero-dolly.mp4" data-sc-src-mobile="/landing/hero-dolly-portrait.mp4" muted playsInline />
             <div className="hero__scrim" aria-hidden="true" />
             <HeroNetwork />
+            <div className="hero__artifact-halo" aria-hidden="true" />
+            <Visual name="proof" size={360} className="hero__artifact" />
             <div className="hero__copy" data-sc-cue="0 0.7 0">
               <p className="eyebrow">{t.eyebrow}</p>
               <h1 className="hero__title">{t.title}</h1>
@@ -180,6 +183,7 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
         >
           <div data-sc-stage className="audit__stage" data-stamped={stamped}>
             <div className="audit__head">
+              <Visual name="evidence" size={64} />
               <h2>{t.auditHead}</h2>
             </div>
             <ol className="thread">
@@ -207,6 +211,7 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
               })}
             </ol>
             <aside className="ledger" aria-label="Deal funnel">
+              <Visual name="outcomes" size={72} />
               <p className="ledger__label">{t.ledger}</p>
               <ol className={`funnel ${stamped === 3 ? "funnel--refused" : ""}`}>
                 {t.stages.map((s, i) => (
@@ -227,13 +232,14 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
         <section className="rules" data-sc-act="flow" data-sc-drift="#f2efe8">
           <div className="rules__wrap">
             <div className="rules__lead" data-sc-in>
+              <Visual name="partnership" size={152} className="rules__art" />
               <h2>{t.rulesHead}</h2>
               <p>{t.rulesBody}</p>
             </div>
             <dl className="levels" data-sc-in data-sc-stagger="90">
-              {t.levels.map((l) => (
+              {t.levels.map((l, i) => (
                 <div key={l.tag}>
-                  <dt><span className={`stamp stamp--${l.kind}`}>{l.tag}</span></dt>
+                  <dt><Visual name={(["conversation", "partnership", "evidence", "network"] as const)[i]} size={72} /><span className={`stamp stamp--${l.kind}`}>{l.tag}</span></dt>
                   <dd><q>{l.quote}</q> {l.text}</dd>
                 </div>
               ))}
@@ -245,6 +251,7 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
         <section id="start" data-sc-act="pin" data-sc-span="1.1" data-sc-drift="#0b0f14" className="close">
           <div data-sc-stage className="close__stage" data-sc-spotlight>
             <div className="close__inner">
+              <Visual name="brand" size={84} className="close__brand" />
               <h2 data-sc-cue="0.04" data-sc-kinetic="lines">{t.closeHead}</h2>
               <p data-sc-cue="0.08">{t.closeBody}</p>
               <div className="close__actions">
@@ -321,7 +328,7 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
         </section>
       </main>
       <footer className="foot">
-        <span>{t.foot}</span>
+        <span className="foot__brand"><BrandMark size={24} />{t.foot}</span>
         <span>{t.powered}</span>
       </footer>
     </>

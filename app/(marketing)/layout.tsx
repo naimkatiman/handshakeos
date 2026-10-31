@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./scrollcraft.css";
 import "./landing.css";
+import "@/components/visuals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://handshakeos.m-naim.workers.dev"),

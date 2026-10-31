@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import ChaseList from "@/components/ChaseList";
 import CorridorMap, { HUBS, parseCorridor, type Corridor } from "@/components/CorridorMap";
 import { Card, btn } from "@/components/ui";
 import { funnel, stageIndex } from "@/lib/funnel";
@@ -86,6 +87,10 @@ export default function Dashboard() {
           </label>
         )}
       </div>
+
+      <Card title="Chase this week" right={<span className="text-xs text-muted">Promises and deadlines from your deals</span>}>
+        <ChaseList opps={all} />
+      </Card>
 
       <Card>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

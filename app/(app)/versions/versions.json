@@ -143,5 +143,10 @@
   "v": "v28",
   "change": "\"Next best move\" on every deal (when the guide is not running): one recommendation with its reason and a button that jumps to the right section, computed by rules from the deal's own data (`lib/nextMove.ts`): evidence awaiting review, then overdue items (chase them, or do yours), then a committed promise needing proof, then \"send the follow-up while it is warm\". No model call, nothing invented. Judge: fresh card deal gives \"Send the follow-up while it is warm\"; with the contact's action overdue it gives \"Chase Dewi: Draft pilot proposal / due Tue, 20 Oct\" and the button lands on the follow-up; with pending evidence it gives \"Review the evidence waiting for you\".",
   "why": "The opportunity page laid out six cards of facts but never said what to do now, which is the step that converts a conversation into an outcome."
+ },
+ {
+  "v": "v29",
+  "change": "Docked guide: when the Prove-it panel scrolls out of view, its current step and single action (\"Verify the reply\", \"Confirm: POC launched\", \"Send the rumour\", \"Reject it\") dock as a bar at the bottom of the screen, with a link back to the guide; it hides again when the panel is visible. Picked from the D1 funnel: all 8 recorded plans came through the guided path, but only 4 sessions pressed the first guide button and 2 finished (small, mostly scripted sample). Judge (390x844, live Gemma): no dock at the top, dock appears after scrolling, three steps completed from the dock alone, deal reached \"Verified: POC launched\", dock hidden again at the top.",
+  "why": "The guide's next action sat in a panel that scrolled away as soon as a visitor started reading the plan."
  }
 ]

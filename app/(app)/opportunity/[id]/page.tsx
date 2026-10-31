@@ -446,6 +446,27 @@ function ProveIt({ opp, onClose }: { opp: Opportunity; onClose: () => void }) {
   }
 
   const step = !advanced ? (pending ? 2 : 1) : !trick ? 3 : trick.status === "pending" ? 4 : 5;
+
+  // When the guide scrolls out of view, its next action docks at the bottom so it is always one tap away.
+  const panel = useRef<HTMLElement>(null);
+  const [docked, setDocked] = useState(false);
+  useEffect(() => {
+    const el = panel.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setDocked(!e.isIntersecting && e.boundingClientRect.top < 0));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const next =
+    step === 1
+      ? { label: "Verify the reply", run: () => send(SAMPLE_EVIDENCE_POC) }
+      : step === 2 && pending
+        ? { label: target ? `Confirm: ${STAGE_LABEL[target]}` : "Log it", run: () => (decideEvidence(opp, pending, true), track("guide_confirm")) }
+        : step === 3
+          ? { label: "Send the rumour", run: () => send(SAMPLE_EVIDENCE_WEAK, true) }
+          : step === 4 && trick
+            ? { label: "Reject it", run: () => decideEvidence(opp, trick, false) }
+            : null;
   useEffect(() => {
     if (step === 5) track("guide_done");
   }, [step]);
@@ -453,7 +474,21 @@ function ProveIt({ opp, onClose }: { opp: Opportunity; onClose: () => void }) {
   const primary = "inline-flex items-center justify-center gap-2 rounded-lg bg-[#4fd1ae] px-4 py-2.5 text-sm font-semibold text-[#06231c] transition hover:brightness-110 disabled:opacity-50";
 
   return (
-    <section aria-live="polite" className="no-print relative overflow-hidden rounded-xl border border-[#4fd1ae]/25 bg-[#0f1d22] p-5 text-[#f2efe8] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.6)] sm:p-6">
+    <>
+    {docked && next && (
+      <div className="no-print fixed inset-x-0 bottom-0 z-30 border-t border-[#4fd1ae]/30 bg-[#0f1d22]/95 px-4 py-3 text-[#f2efe8] backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center gap-3">
+          <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[#4fd1ae]">Step {step} of 4</span>
+          <button onClick={() => panel.current?.scrollIntoView({ behavior: "smooth", block: "start" })} className="hidden text-sm text-white/60 underline sm:inline">
+            Back to the guide
+          </button>
+          <button className={`${primary} ml-auto`} disabled={busy} onClick={next.run}>
+            {busy && <Spinner />} {busy ? "Checking…" : next.label}
+          </button>
+        </div>
+      </div>
+    )}
+    <section ref={panel} aria-live="polite" className="no-print relative scroll-mt-20 overflow-hidden rounded-xl border border-[#4fd1ae]/25 bg-[#0f1d22] p-5 text-[#f2efe8] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.6)] sm:p-6">
       <div className="flex items-center justify-between gap-3">
         <ol className="flex gap-1.5" aria-label={`Step ${Math.min(step, 4)} of 4`}>
           {[1, 2, 3, 4].map((n) => (
@@ -533,6 +568,7 @@ function ProveIt({ opp, onClose }: { opp: Opportunity; onClose: () => void }) {
 
       {error && <p className="mt-3 rounded-lg bg-[#ff7a6b]/15 px-3 py-2 text-sm text-[#ff7a6b]">{error}</p>}
     </section>
+    </>
   );
 }
 

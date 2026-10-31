@@ -1,9 +1,7 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import type { Metadata } from "next";
+import releases from "./versions.json";
 
-// Rendered from docs/versions.md at build time, so the page can never drift from the real release log.
-export const dynamic = "force-static";
+// Generated from docs/versions.md by scripts/versions.mjs before every build, so the page never drifts from the real log.
 
 export const metadata: Metadata = {
   title: "HandshakeOS · Every version, and why",
@@ -12,17 +10,7 @@ export const metadata: Metadata = {
 
 type Row = { v: string; change: string; why: string };
 
-function rows(): Row[] {
-  const md = readFileSync(join(process.cwd(), "docs", "versions.md"), "utf8");
-  return md
-    .split(/\r?\n/)
-    .filter((l) => /^\|\s*v\d+/.test(l))
-    .map((l) => {
-      const [v, change, why] = l.replace(/^\||\|\s*$/g, "").split(" | ").map((c) => c.trim());
-      return { v, change: change ?? "", why: why ?? "" };
-    })
-    .reverse();
-}
+const rows = (): Row[] => [...(releases as Row[])].reverse();
 
 /** Inline `code` from the markdown; everything else stays plain text. */
 function Inline({ text }: { text: string }) {

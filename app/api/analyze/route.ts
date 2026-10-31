@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   if (text.length > 20_000) return NextResponse.json({ error: "Input too long (20k chars max)." }, { status: 413 });
 
   const now = new Date();
-  const canned = image ? null : cannedAnalysis(text, now);
+  const canned = cannedAnalysis(text, now, !!image);
 
   if (!hasKey()) {
     if (canned) return NextResponse.json({ analysis: normalizeAnalysis(canned, text), engine: { mode: "demo", model: GEMMA_MODEL } });

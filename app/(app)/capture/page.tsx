@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Card, LevelBadge, Spinner, btn } from "@/components/ui";
 import { fileToImageInput } from "@/lib/image";
-import { SAMPLE_NOTES_EN, SAMPLE_NOTES_MS } from "@/lib/samples";
+import { SAMPLE_CARD_NOTE, SAMPLE_NOTES_EN, SAMPLE_NOTES_MS } from "@/lib/samples";
 import { store, uid, useOpportunities } from "@/lib/store";
 import { STAGE_LABEL, type Analysis, type EngineInfo, type Opportunity } from "@/lib/types";
 
@@ -22,6 +22,25 @@ export default function CapturePage() {
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+  // null until /api/status answers. Without a key only the built-in samples can be analysed.
+  const [live, setLive] = useState<boolean | null>(null);
+  useEffect(() => {
+    fetch("/api/status").then((r) => r.json()).then((s: { live: boolean }) => setLive(s.live)).catch(() => setLive(null));
+  }, []);
+
+  // One click from a sample to a finished plan. Only the English deal has the guided Prove-it follow-up.
+  async function runSample(kind: "en" | "ms" | "card") {
+    if (kind === "card") {
+      const img = await fileToImageInput(await fetch("/samples/business-card.png").then((r) => r.blob()));
+      setText(SAMPLE_CARD_NOTE);
+      setImage(img);
+      return analyse(SAMPLE_CARD_NOTE, img);
+    }
+    const notes = kind === "en" ? SAMPLE_NOTES_EN : SAMPLE_NOTES_MS;
+    setText(notes);
+    setImage(null);
+    return analyse(notes, null, kind === "en");
+  }
 
   async function pickFile(f?: File | Blob | null) {
     if (!f) return;
@@ -35,7 +54,7 @@ export default function CapturePage() {
 
   async function loadCard() {
     const blob = await fetch("/samples/business-card.png").then((r) => r.blob());
-    setText("Met at Startup ASEAN mixer. Keen on a pilot, asked us to send a proposal by end of month.");
+    setText(SAMPLE_CARD_NOTE);
     pickFile(blob);
   }
 
@@ -93,17 +112,36 @@ export default function CapturePage() {
     <div className="space-y-8">
       <div className="max-w-2xl pt-4">
         <p className="text-sm font-medium text-accent">Startup ASEAN · Outcome Conversion</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
-          Stop collecting contacts.
-          <br />
-          Start closing opportunities.
-        </h1>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Run a real conversation.</h1>
         <p className="mt-3 text-muted">
-          Drop in meeting notes, a chat export or a business card. Gemma 4 extracts the deal, the commitments and the next
+          Pick one of these, the way they actually arrive after an event. Gemma 4 extracts the deal, the commitments and the next
           steps, and every claim is checked against what was actually said.
         </p>
       </div>
 
+      <div className="grid gap-3 md:grid-cols-3">
+        <SampleTile disabled={busy} onClick={() => runSample("en")} label="Meeting notes · English" tag="Guided walkthrough">
+          <p className="line-clamp-5 font-mono text-[12.5px] leading-relaxed text-ink/80">{SAMPLE_NOTES_EN}</p>
+        </SampleTile>
+        <SampleTile disabled={busy} onClick={() => runSample("ms")} label="WhatsApp note · Bahasa Melayu" tag="Johor retail">
+          <span className="block rounded-lg rounded-tl-none bg-[#dcf8c6] px-3 py-2 shadow-sm">
+            <span className="line-clamp-5 text-[13px] leading-relaxed text-[#1f2c22]">{SAMPLE_NOTES_MS}</span>
+          </span>
+        </SampleTile>
+        <SampleTile disabled={busy} onClick={() => runSample("card")} label="Business card · photo" tag="Image input">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/samples/business-card.png" alt="Sample business card" className="mx-auto h-28 -rotate-2 rounded-md object-contain shadow-[0_12px_24px_-12px_rgba(0,0,0,0.45)]" />
+        </SampleTile>
+      </div>
+
+      <div>
+        <h2 className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-muted">Or paste your own</h2>
+        {live === false && (
+          <p className="mb-3 rounded-lg border border-amber/30 bg-amber-soft px-3 py-2 text-sm text-amber">
+            This public demo has no Gemini key, so it can only analyse the three conversations above. Your own notes work when you run
+            HandshakeOS with a free key from Google AI Studio.
+          </p>
+        )}
       <Card>
         <div className="grid gap-4 lg:grid-cols-[1fr_220px]">
           <div>
@@ -159,19 +197,9 @@ export default function CapturePage() {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <span className="mr-1 text-xs text-muted">Try:</span>
-          <button className={btn.chip} onClick={() => { setText(SAMPLE_NOTES_EN); setImage(null); }}>
-            MY → SG logistics (EN)
-          </button>
-          <button className={btn.chip} onClick={() => { setText(SAMPLE_NOTES_MS); setImage(null); }}>
-            Johor retail (Bahasa Melayu)
-          </button>
-          <button className={btn.chip} onClick={loadCard}>
-            Business card (image)
-          </button>
           <button className={`${btn.accent} ml-auto`} disabled={busy || (!text.trim() && !image)} onClick={() => analyse()}>
             {busy ? <Spinner /> : null}
-            {busy ? "Analysing…" : "Analyse with Gemma"}
+            {busy ? "Analysing…" : live === false ? "Analyse (samples only)" : "Analyse with Gemma"}
           </button>
         </div>
 
@@ -186,6 +214,7 @@ export default function CapturePage() {
         )}
         {error && <p className="mt-4 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">{error}</p>}
       </Card>
+      </div>
 
       {mine.length > 0 && (
         <div>
@@ -205,5 +234,23 @@ export default function CapturePage() {
         </div>
       )}
     </div>
+  );
+}
+
+function SampleTile({ label, tag, onClick, disabled, children }: { label: string; tag: string; onClick: () => void; disabled?: boolean; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className="group flex flex-col rounded-xl border border-line bg-card p-4 text-left transition hover:-translate-y-0.5 hover:border-accent hover:shadow-[0_18px_40px_-24px_rgba(15,110,92,0.55)] disabled:opacity-50"
+    >
+      <span className="mb-3 flex items-center justify-between gap-2">
+        <span className="text-sm font-semibold">{label}</span>
+        <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">{tag}</span>
+      </span>
+      <span className="flex min-h-28 flex-1 items-center">{children}</span>
+      <span className="mt-4 text-sm font-semibold text-accent">Run this deal <span className="inline-block transition group-hover:translate-x-1">→</span></span>
+    </button>
   );
 }

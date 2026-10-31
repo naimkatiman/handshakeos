@@ -6,6 +6,18 @@ export const SAMPLE_NOTES_EN = `Met Singapore logistics team. They're interested
 
 export const SAMPLE_NOTES_MS = `Jumpa En. Hafiz dari Kedai Runcit Digital (Johor) masa sesi Startup ASEAN. Diorang ada 350 kedai runcit dalam rangkaian, nak cuba sistem e-invois kita sebab LHDN mandatory tahun depan. Hafiz cakap boleh mula dengan 20 kedai dulu, tapi kena present kat bos dia minggu depan. Dia minta deck + harga per kedai sebelum Isnin. Kena follow up cepat.`;
 
+// Typed note that travels with the business card photo in public/samples/business-card.png.
+export const SAMPLE_CARD_NOTE = "Met at Startup ASEAN mixer. Keen on a pilot, asked us to send a proposal by end of month.";
+// Exactly what is printed on that card. Used as the canned image transcript so quotes stay grounded.
+const SAMPLE_CARD_TEXT = `NUSANTARA AGRITECH
+Smart irrigation for smallholder farms
+Dewi Lestari
+Head of Partnerships
+dewi@nusantara-agri.example
++62 812 0000 1234
+Bandung, Indonesia
+Startup ASEAN 2026`;
+
 export const SAMPLE_EVIDENCE_MEETING = `From: Sarah Tan (Head of Operations, LintasExpress SG)
 Hi team, thanks for walking our ops leads through the route optimizer on yesterday's call — very useful session. We've agreed internally to proceed with the 14-day pilot on 10 vans, starting Monday. Ops requirements attached. Can you confirm onboarding by Friday?`;
 
@@ -26,7 +38,46 @@ function nextWeekday(from: Date, weekday: number) {
   return d.toISOString().slice(0, 10);
 }
 
-export function cannedAnalysis(text: string, today: Date): Analysis | null {
+// Last day of the month `from` falls in, as YYYY-MM-DD ("end of month" in the card note).
+function endOfMonth(from: Date) {
+  return new Date(Date.UTC(from.getFullYear(), from.getMonth() + 1, 0)).toISOString().slice(0, 10);
+}
+
+export function cannedAnalysis(text: string, today: Date, hasImage = false): Analysis | null {
+  if (hasImage) {
+    if (norm(text) !== norm(SAMPLE_CARD_NOTE)) return null;
+    return {
+      title: "Nusantara Agritech Irrigation Pilot",
+      ourSide: { name: "Our team", country: "Malaysia" },
+      counterparty: { name: "Nusantara Agritech", country: "Indonesia" },
+      contacts: [{ name: "Dewi Lestari", organisation: "Nusantara Agritech", role: "Head of Partnerships" }],
+      opportunity: "A pilot with Nusantara Agritech, a Bandung smart-irrigation company for smallholder farms, starting from a proposal due by month end.",
+      sector: "Agritech",
+      corridor: "Malaysia → Indonesia",
+      language: "English",
+      keyTerms: [
+        { label: "Ask", value: "Proposal" },
+        { label: "Deadline", value: "End of month" },
+        { label: "Their focus", value: "Smallholder irrigation" },
+      ],
+      commitments: [{ claim: "We owe Dewi a proposal", quote: "asked us to send a proposal by end of month" }],
+      actions: [
+        { title: "Send Dewi the pilot proposal", detail: "Scope, timeline and price for a small first pilot.", owner: "Our team", dueText: "end of month", dueDate: endOfMonth(today) },
+        { title: "Confirm who signs off", detail: "Dewi leads partnerships; ask who approves a pilot budget.", owner: "Our team" },
+        { title: "Send the follow-up message", detail: "Review the draft below before sending.", owner: "Our team", dueText: "within 24h" },
+      ],
+      followUp:
+        "Hi Dewi, great meeting you at the Startup ASEAN mixer. Thanks for your interest in a pilot. We'll send a proposal before the end of the month. Is there anything about your smallholder irrigation setup we should design around?",
+      initialLevel: "proposed",
+      evidence: [
+        { claim: "Interest in a pilot", quote: "Keen on a pilot" },
+        { claim: "Contact leads partnerships", quote: "Head of Partnerships" },
+        { claim: "Based in Bandung, Indonesia", quote: "Bandung, Indonesia" },
+      ],
+      risks: ["Interest only: nothing agreed beyond a proposal", "Budget owner unknown"],
+      transcript: SAMPLE_CARD_TEXT,
+    };
+  }
   if (norm(text) === norm(SAMPLE_NOTES_EN)) {
     return {
       title: "Singapore Logistics Partnership",

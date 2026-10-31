@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240"><defs>
+  <linearGradient id="mint" x1="0" y1="0" x2=".85" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#dcfff0"/><stop offset=".42" stop-color="#6ce5c2"/><stop offset="1" stop-color="#249c83"/></linearGradient>
+  <linearGradient id="ivory" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#fffef5"/><stop offset=".55" stop-color="#e5ede6"/><stop offset="1" stop-color="#a6c4bf"/></linearGradient>
+  <linearGradient id="navy" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#41586a"/><stop offset=".45" stop-color="#253b4a"/><stop offset="1" stop-color="#12212f"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0bd"/><stop offset=".5" stop-color="#f4c66e"/><stop offset="1" stop-color="#b2782d"/></linearGradient>
+  <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#268d78"/><stop offset="1" stop-color="#103c3a"/></linearGradient>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b0ffe5" stop-opacity=".36"/><stop offset="1" stop-color="#4fd1ae" stop-opacity=".06"/></linearGradient>
+  <radialGradient id="halo"><stop stop-color="#4fd1ae" stop-opacity=".22"/><stop offset="1" stop-color="#4fd1ae" stop-opacity="0"/></radialGradient>
+  <filter id="shadow" x="-50%" y="-50%" width="200%" height="240%"><feGaussianBlur stdDeviation="8"/></filter>
+</defs><ellipse cx="121" cy="207" rx="71" ry="13" fill="#020b12" opacity=".3" filter="url(#shadow)"/><g transform="rotate(-14 120 120)">
+    <circle cx="120" cy="125" r="82" fill="#8a662a"/><circle cx="120" cy="116" r="82" fill="url(#gold)" stroke="#ffefb8" stroke-width="2"/>
+    <circle cx="120" cy="116" r="68" fill="url(#navy)" stroke="#5b795f" stroke-width="2"/>
+    <path d="M120 56V68M120 164V176M60 116H72M168 116H180" fill="none" stroke="#e2e6c9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M79 76 86 83M154 150 162 158M79 156 86 149M154 83 161 76" fill="none" stroke="#98b6a2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <g transform="translate(0 5)"><path d="M148 72 127 126 92 160 111 106Z" fill="#163f36" /></g><g transform="translate(0 2.5)"><path d="M148 72 127 126 92 160 111 106Z" fill="#163f36" /></g><path d="M148 72 127 126 92 160 111 106Z" fill="url(#mint)" stroke="#effff5" stroke-opacity=".45" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M127 126 92 160 111 106 119 115Z" fill="url(#ivory)" />
+    <circle cx="120" cy="116" r="9" fill="url(#gold)" stroke="#fff0c1"/>
+    <path d="M65 82Q89 45 135 49" fill="none" stroke="#fff0c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg>

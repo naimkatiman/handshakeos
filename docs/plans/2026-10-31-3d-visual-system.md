@@ -64,3 +64,13 @@ The next outcome to measure is whether first-time users recognize the capture-to
 The user subsequently authorized: "go push and deploy". Release from release/3d-visuals-20261031 through a GitHub pull request. Preserve the already-live v22-v25 commits (deal questions, CSP, branded 404, and keyboard access), which were missing from origin/main. Those committed changes were replayed before the three visual commits in an isolated worktree. Uncommitted changes in the other sessions remain excluded. The production baseline at preflight is Worker version 683fae61-ec6c-4203-ab5a-e5da1c5fae59 (100% traffic), with v25 and CSP verified publicly.
 
 Release gates: typecheck and production browser suite on the combined source; approved PR head checked immediately before merge; clean worktree at the exact merged SHA; OpenNext build; deployment with existing variables and secrets preserved; public asset hashes, favicon, CSP, keyboard access, and the sample evidence flow verified after deployment. No migrations are owned by this release.
+
+## Asset expansion, 2026-10-31
+
+Request: "go populate more assets". Execute locally in feat/3d-assets-expansion-20261031 from origin/main bd164aed0d1ebb0266fea85985c8f7f414fdcf27. The earlier deployment handoff is still pending; this request authorizes further visual work, not interference with the parallel deployer.
+
+Self-approved implementation plan: extend the existing material palette and generator with eight functional icons (mail, checklist, calendar, search, archive, alert, compass, receipt) and one larger briefing illustration. Use them in the capture entry points, follow-up and action cards, deadline reminders, evidence and risk sections, saved records, landing explanation, and the existing 404. Preserve copy, data, controls, print behavior, and existing layout hierarchy. No new dependencies or runtime animation.
+
+Baseline: nine reusable SVG assets. Expansion target: eighteen assets total, all below 20 KB individually and the collection below 100 KB. Every new asset must be used in the application. Small controls keep visible text; artwork is decorative and cannot imply that unverified evidence is confirmed.
+
+Verification: regenerate the artwork and inspect a contact sheet; run typecheck and the production Webpack build; extend the existing browser check for the additional placements and 404; exercise capture, evidence confirmation, hearsay rejection, own-deal filtering, and print presentation. Inspect desktop and 320/390 pixel screenshots. Keep asset and UI commits separate, each below the repository's file and line limits.

@@ -240,6 +240,33 @@ q { quotes: "\201C" "\201D"; }
 .own__box:focus { outline: none; border-color: var(--sc-accent); box-shadow: 0 0 0 3px rgb(79 209 174 / 0.18); }
 .own__go { grid-column: 2; justify-self: end; background: rgb(255 255 255 / 0.06); font: inherit; font-weight: 600; cursor: pointer; }
 .own__go:disabled { opacity: 0.45; cursor: not-allowed; }
+/* ── 6 pocket: scan and run it on your own phone ─────────────────────── */
+.pocket { padding: clamp(4.5rem, 12vh, 8rem) var(--gutter); border-top: 1px solid var(--sc-hairline); }
+.pocket__wrap { max-width: 64rem; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(2rem, 6vw, 5rem); align-items: center; }
+.pocket__head { margin: 0; font-size: clamp(1.9rem, 3.6vw, 3rem); line-height: 1.04; letter-spacing: -0.035em; font-weight: 600; max-width: 18ch; }
+.steps { list-style: none; margin: 2rem 0 0; padding: 0; display: grid; gap: 1.4rem; }
+.steps li { display: grid; grid-template-columns: 2.2rem 1fr; gap: 1rem; align-items: start; }
+.steps__n {
+  display: grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 999px;
+  border: 1px solid var(--sc-accent); color: var(--sc-accent); font-family: var(--mono); font-size: 0.9rem;
+}
+.steps__title { margin: 0.2rem 0 0; font-weight: 600; font-size: 1.08rem; }
+.steps__text { margin: 0.3rem 0 0; color: var(--sc-ink-soft); line-height: 1.55; max-width: 34rem; }
+.pocket__phone { display: inline-flex; margin-top: 2rem; }
+.steps__tap { display: none; }
+.qr { margin: 0; padding: 1.1rem 1.1rem 1rem; border-radius: 1.25rem; background: var(--paper); color: var(--paper-ink); text-align: center; box-shadow: 0 0 0 1px rgb(79 209 174 / 0.35), 0 24px 60px -20px rgb(79 209 174 / 0.35); }
+.qr img { display: block; width: clamp(11rem, 20vw, 15rem); height: auto; image-rendering: pixelated; }
+.qr figcaption { display: grid; gap: 0.2rem; margin-top: 0.8rem; }
+.qr__cue { font-weight: 600; font-size: 0.95rem; }
+.qr__url { font-family: var(--mono); font-size: 0.7rem; color: #4d535b; }
+/* On a phone the visitor is already holding the device: swap the code for a button. */
+@media (max-width: 860px) {
+  .pocket__wrap { grid-template-columns: 1fr; }
+  .qr, .steps__scan { display: none; }
+  .steps__tap { display: block; }
+  .pocket__phone { display: inline-flex; }
+}
+
 .foot {
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem;
   padding: 1.25rem var(--gutter); border-top: 1px solid var(--sc-hairline);

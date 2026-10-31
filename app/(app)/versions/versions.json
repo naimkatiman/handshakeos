@@ -98,5 +98,10 @@
   "v": "v19",
   "change": "Public changelog at `/versions` (and a Versions tab): every release rendered from `docs/versions.md` at build time, newest first, with what changed, why, and the recorded check split out as \"Verified\". The headline counts only what the log supports. Tabs tightened so the three-tab nav fits a 390px phone. Judge: page prerendered static, counts match the log (19 releases, 15 with a recorded check at build), no overflow at 390 on /versions, /capture, /dashboard.",
   "why": "Judges evaluate a hackathon build; the iteration and its evidence were invisible to them."
+ },
+ {
+  "v": "v20",
+  "change": "\"Your turn\" hand-off at the bottom of the landing (EN and BM): a numbered tutorial that walks one deal from promise to proof (open the sample, read the plan, verify Sarah's reply, reject the rumour), next to a QR card that opens the guided sample deal on the visitor's own phone. On phones the code is hidden and step 1 becomes \"Tap Start the sample deal\". QR is a static SVG (`public/landing/try.svg`), no new dependency. Judge: QR decoded from the rendered page on `/` and `/ms` equals `https://handshakeos.m-naim.workers.dev/capture?sample=en&run=1` (200 live); 390px phone run reached `/opportunity/...?guide=1` in 12.1 s; no overflow at 390; typecheck green.",
+  "why": "Someone watching the page or the demo had no zero-typing way to try the product in their own hands."
  }
 ]

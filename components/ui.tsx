@@ -51,7 +51,7 @@ export function StageTrack({ stage, pending }: { stage: Stage; pending?: Stage }
 export function EngineTag({ engine }: { engine: EngineInfo }) {
   const label =
     engine.mode === "live"
-      ? `${engine.model} via OpenRouter${engine.ms ? ` · ${(engine.ms / 1000).toFixed(1)}s` : ""}`
+      ? `${engine.model} via ${engine.via ?? "OpenRouter"}${engine.ms ? ` · ${(engine.ms / 1000).toFixed(1)}s` : ""}`
       : engine.mode === "fallback"
         ? "Offline fallback (sample)"
         : "Demo output (no API key)";

@@ -1,14 +1,26 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-const API = "https://openrouter.ai/api/v1/chat/completions";
+const OPENROUTER = "https://openrouter.ai/api/v1/chat/completions";
+const GEMINI = "https://generativelanguage.googleapis.com/v1beta/models";
 
 /** Paid OpenRouter id. The :free pool answers 429 under load, which would kill a live judging session. */
 export const DEFAULT_GEMMA_MODEL = "google/gemma-4-26b-a4b-it";
+/**
+ * Gemini lists gemma-4-26b-a4b-it, and that route returns 500 often enough to fail a demo.
+ * flash-lite-latest is the stable Gemini model that answered on 2026-10-31.
+ */
+export const DEFAULT_GEMINI_MODEL = "gemini-flash-lite-latest";
 
 export interface ImageInput {
   data: string; // base64, no data: prefix
   mimeType: string;
+}
+
+export interface GemmaCall<T> {
+  value: T;
+  via: "OpenRouter" | "Gemini";
+  model: string;
 }
 
 /**
@@ -31,10 +43,14 @@ function readEnv(name: string): string | undefined {
   return trimmed ? trimmed : undefined;
 }
 
-export const hasKey = () => Boolean(readEnv("OPENROUTER_API_KEY"));
+export const hasKey = () => Boolean(readEnv("OPENROUTER_API_KEY") || readEnv("GEMINI_API_KEY"));
 
 export function modelName(): string {
   return readEnv("GEMMA_MODEL") || DEFAULT_GEMMA_MODEL;
+}
+
+export function geminiModel(): string | null {
+  return readEnv("GEMINI_API_KEY") ? readEnv("GEMINI_MODEL") || DEFAULT_GEMINI_MODEL : null;
 }
 
 function messageText(message: { content?: unknown } | undefined): string {
@@ -48,22 +64,28 @@ function messageText(message: { content?: unknown } | undefined): string {
   return "";
 }
 
-/**
- * Calls open-weight Gemma 4 through OpenRouter and returns parsed JSON.
- * Reasoning is off so the token budget is the JSON, not a thought trace.
- * Instructions stay in the user turn, and the response is parsed defensively
- * because Gemma sometimes wraps JSON in fences.
- */
-export async function gemmaJSON<T>(prompt: string, image?: ImageInput): Promise<T> {
-  const key = readEnv("OPENROUTER_API_KEY");
-  if (!key) throw new Error("OPENROUTER_API_KEY is not set");
+function redact(msg: string): string {
+  return msg.replace(/sk-or-v1-[a-z0-9]+/gi, "sk-or-[redacted]").replace(/AQ\.[A-Za-z0-9_\-]+/g, "AQ.[redacted]");
+}
 
+function errorMessage(err: string): string {
+  let msg = err.slice(0, 240);
+  try {
+    const parsed = JSON.parse(err) as { error?: { message?: string } | string };
+    msg = (typeof parsed.error === "string" ? parsed.error : parsed.error?.message) ?? msg;
+  } catch {
+    /* keep the raw slice */
+  }
+  return redact(msg);
+}
+
+async function openRouter<T>(prompt: string, image: ImageInput | undefined, key: string): Promise<T> {
   const textPart = { type: "text", text: prompt };
   const content = image
     ? [{ type: "image_url", image_url: { url: `data:${image.mimeType};base64,${image.data}` } }, textPart]
     : prompt;
 
-  const res = await fetch(API, {
+  const res = await fetch(OPENROUTER, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -81,20 +103,63 @@ export async function gemmaJSON<T>(prompt: string, image?: ImageInput): Promise<
     signal: AbortSignal.timeout(60_000),
   });
 
-  if (!res.ok) {
-    const err = await res.text();
-    let msg = err.slice(0, 240);
-    try {
-      const parsed = JSON.parse(err) as { error?: { message?: string } | string };
-      msg = (typeof parsed.error === "string" ? parsed.error : parsed.error?.message) ?? msg;
-    } catch {
-      /* keep the raw slice */
-    }
-    throw new Error(`OpenRouter ${res.status}: ${msg.replace(/sk-or-v1-[a-z0-9]+/gi, "sk-or-[redacted]")}`);
-  }
-
+  if (!res.ok) throw new Error(`OpenRouter ${res.status}: ${errorMessage(await res.text())}`);
   const json = (await res.json()) as { choices?: { message?: { content?: unknown } }[] };
   return parseJSON<T>(messageText(json?.choices?.[0]?.message));
+}
+
+async function gemini<T>(prompt: string, image: ImageInput | undefined, key: string, model: string): Promise<T> {
+  const parts: Record<string, unknown>[] = [];
+  if (image) parts.push({ inlineData: { mimeType: image.mimeType, data: image.data } });
+  parts.push({ text: prompt });
+
+  const res = await fetch(`${GEMINI}/${model}:generateContent`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+    body: JSON.stringify({
+      contents: [{ role: "user", parts }],
+      generationConfig: { temperature: 0.2, maxOutputTokens: 4096 },
+    }),
+    signal: AbortSignal.timeout(60_000),
+  });
+
+  if (!res.ok) throw new Error(`Gemini ${res.status}: ${errorMessage(await res.text())}`);
+  const json = (await res.json()) as { candidates?: { content?: { parts?: { thought?: boolean; text?: string }[] } }[] };
+  const text = (json?.candidates?.[0]?.content?.parts ?? [])
+    .filter((p) => !p.thought && p.text)
+    .map((p) => p.text)
+    .join("");
+  return parseJSON<T>(text);
+}
+
+/**
+ * OpenRouter Gemma 4 is the main call. If it throws, Gemini runs the stable
+ * flash-lite model. Instructions stay in the user turn. JSON is parsed
+ * defensively because models sometimes wrap it in fences.
+ */
+export async function gemmaJSON<T>(prompt: string, image?: ImageInput): Promise<GemmaCall<T>> {
+  const errors: string[] = [];
+  const openRouterKey = readEnv("OPENROUTER_API_KEY");
+  if (openRouterKey) {
+    try {
+      return { value: await openRouter<T>(prompt, image, openRouterKey), via: "OpenRouter", model: modelName() };
+    } catch (e) {
+      errors.push((e as Error).message);
+    }
+  }
+
+  const geminiKey = readEnv("GEMINI_API_KEY");
+  const model = readEnv("GEMINI_MODEL") || DEFAULT_GEMINI_MODEL;
+  if (geminiKey) {
+    try {
+      return { value: await gemini<T>(prompt, image, geminiKey, model), via: "Gemini", model };
+    } catch (e) {
+      errors.push((e as Error).message);
+    }
+  }
+
+  if (!errors.length) throw new Error("No model key is set");
+  throw new Error(errors.join(" | "));
 }
 
 export function parseJSON<T>(raw: string): T {

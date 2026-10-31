@@ -37,6 +37,8 @@ npm run dev                  # http://localhost:3000
 
 Get a key at <https://openrouter.ai/keys>. Default model: `google/gemma-4-26b-a4b-it` (open weights, fast MoE, vision). `google/gemma-4-31b-it` is the stronger alternative. Set `GEMMA_MODEL` to switch. Use the paid id. The `:free` pool returns 429 when several people click at once.
 
+If that call fails, the server tries `GEMINI_API_KEY` with `gemini-flash-lite-latest`. The result says which provider answered. Gemma 4 on the Gemini API is listed, and it often returns 500, so it is not the fallback.
+
 **No key?** The app runs in *Demo mode*: the built-in samples return pre-recorded outputs so you can walk the whole flow. With a key, if the live call fails mid-demo on a sample, the app serves the sample result and labels it "Offline fallback" so your demo never dies on stage.
 
 ### Deploy to Vercel

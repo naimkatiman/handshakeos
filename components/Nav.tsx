@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function Nav() {
   const path = usePathname();
-  const [status, setStatus] = useState<{ live: boolean; model: string } | null>(null);
+  const [status, setStatus] = useState<{ live: boolean; model: string; fallback?: string | null } | null>(null);
   useEffect(() => {
     fetch("/api/status").then((r) => r.json()).then(setStatus).catch(() => {});
   }, []);
@@ -36,7 +36,11 @@ export default function Nav() {
         <div className="ml-auto">
           {status && (
             <span
-              title={status.live ? `Live: ${status.model} via OpenRouter` : "No OPENROUTER_API_KEY set: built-in samples only"}
+              title={
+                status.live
+                  ? `Live: ${status.model} via OpenRouter${status.fallback ? `. If that fails: ${status.fallback} on Gemini` : ""}`
+                  : "No model key set: built-in samples only"
+              }
               className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${
                 status.live ? "border-accent/30 bg-accent-soft text-accent" : "border-amber/30 bg-amber-soft text-amber"
               }`}

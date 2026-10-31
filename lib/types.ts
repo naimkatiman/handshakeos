@@ -97,5 +97,6 @@ export interface Opportunity {
 export interface EngineInfo {
   mode: "live" | "demo" | "fallback";
   model: string;
+  via?: "OpenRouter" | "Gemini";
   ms?: number;
 }

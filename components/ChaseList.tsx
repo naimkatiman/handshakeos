@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { stageIndex } from "@/lib/funnel";
 import { STAGE_LABEL, type Opportunity } from "@/lib/types";
+import { Visual } from "@/components/Visual";
 
 type Item =
   | { kind: "promise"; quote: string; milestone: string }
@@ -49,10 +50,13 @@ export default function ChaseList({ opps }: { opps: Opportunity[] }) {
 
   if (!rows.length)
     return (
-      <p className="text-sm text-muted">
+      <div className="visual-empty">
+        <Visual name="calendar" size={84} />
+        <p className="text-sm text-muted">
         Nothing owed this week. When you capture a deal, its promises and deadlines land here.{" "}
         <Link href="/capture" className="font-medium text-accent underline">Capture one</Link>
-      </p>
+        </p>
+      </div>
     );
 
   return (
@@ -68,6 +72,7 @@ export default function ChaseList({ opps }: { opps: Opportunity[] }) {
               const askThem = it.kind === "promise" || it.theirs;
               return (
                 <li key={key} className="flex flex-wrap items-start gap-x-3 gap-y-1.5 text-sm">
+                  <Visual name={it.kind === "promise" ? "mail" : "calendar"} size={32} className="hidden sm:inline-block" />
                   <span
                     className={`mt-0.5 shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${
                       it.kind === "due" && it.overdue ? "border-danger/30 bg-danger-soft text-danger" : it.kind === "promise" ? "border-amber/30 bg-amber-soft text-amber" : "border-line bg-paper text-muted"

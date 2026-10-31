@@ -107,7 +107,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      <Card icon="conversation" title="Chase this week" right={<span className="text-xs text-muted">Promises and deadlines from your deals</span>}>
+      <Card icon="calendar" title="Chase this week" right={<span className="text-xs text-muted">Promises and deadlines from your deals</span>}>
         <ChaseList opps={all} />
       </Card>
 
@@ -152,6 +152,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <Card title={filter ? `Opportunities · ${filter}` : "Opportunities"} right={<span className="num text-xs text-muted">{shown.length}</span>}>
+          {shown.length === 0 && <Visual name="archive" size={112} className="visual-empty-art" />}
           <ul className="divide-y divide-line">
             {[...shown]
               .sort((a, b) => stageIndex(b.stage) - stageIndex(a.stage) || b.updatedAt.localeCompare(a.updatedAt))
@@ -182,7 +183,7 @@ export default function Dashboard() {
         </Card>
 
         <div className="space-y-5">
-          <Card title="By corridor">
+          <Card icon="compass" title="By corridor">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs text-muted">
@@ -205,7 +206,7 @@ export default function Dashboard() {
             </table>
           </Card>
 
-          <Card icon="capture" title="Data">
+          <Card icon="archive" title="Data">
             <div className="flex flex-wrap gap-2">
               <button className={btn.ghost} onClick={() => download("handshakeos.csv", toCSV(opps), "text/csv")}>Export CSV</button>
               <button className={btn.ghost} onClick={() => download("handshakeos.json", JSON.stringify(all, null, 2), "application/json")}>Export JSON</button>

@@ -66,8 +66,7 @@ q { quotes: "\201C" "\201D"; }
 
 /* ── 1 hero ──────────────────────────────────────────────────────────── */
 .hero__stage { overflow: hidden; }
-.hero__plate { position: absolute; inset: -8% 0; z-index: 0; }
-.hero__plate img { width: 100%; height: 100%; object-fit: cover; object-position: 30% 50%; }
+.hero__stage .hero__media { object-position: 30% 50%; }
 .hero__scrim {
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background: linear-gradient(270deg, rgb(11 15 20 / 0.94) 0%, rgb(11 15 20 / 0.78) 36%, rgb(11 15 20 / 0.1) 62%),
@@ -102,7 +101,7 @@ q { quotes: "\201C" "\201D"; }
 @media (max-width: 860px) {
   .hero__scrim { background: linear-gradient(0deg, rgb(11 15 20 / 0.97) 0%, rgb(11 15 20 / 0.86) 48%, rgb(11 15 20 / 0.1) 75%); }
   .hero__copy { top: auto; bottom: clamp(1.5rem, 6vh, 3rem); translate: none; right: auto; left: var(--gutter); }
-  .hero__plate img { object-position: 38% 50%; }
+  .hero__stage .hero__media { object-position: 38% 50%; }
   .chip--a { display: none; }
   .chip--b { display: none; }
   .hero__net { width: 100%; height: 62%; -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent); mask-image: linear-gradient(180deg, #000 70%, transparent); }

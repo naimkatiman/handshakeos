@@ -16,14 +16,19 @@ export interface ImageInput {
  * and fall back to .env.local when this runs under `next dev`.
  */
 function readEnv(name: string): string | undefined {
-  const fromProcess = process.env[name];
-  if (fromProcess) return fromProcess;
-  try {
-    const value = (getCloudflareContext().env as Record<string, unknown>)[name];
-    return typeof value === "string" && value ? value : undefined;
-  } catch {
-    return undefined;
+  // Trim: a secret uploaded with a trailing newline is an illegal header value,
+  // and Workers then send the OpenRouter call with no Authorization header.
+  let raw = process.env[name];
+  if (!raw) {
+    try {
+      const value = (getCloudflareContext().env as Record<string, unknown>)[name];
+      if (typeof value === "string") raw = value;
+    } catch {
+      /* next dev has no Cloudflare context */
+    }
   }
+  const trimmed = raw?.trim();
+  return trimmed ? trimmed : undefined;
 }
 
 export const hasKey = () => Boolean(readEnv("OPENROUTER_API_KEY"));

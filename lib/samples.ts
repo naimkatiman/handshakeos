@@ -2,7 +2,17 @@ import type { Analysis, EvidenceFinding } from "./types";
 
 // ── Demo inputs (fictional scenario) ────────────────────────────────────────
 
-export const SAMPLE_NOTES_EN = `Met Singapore logistics team. They're interested in testing our AI route optimizer. They have about 200 delivery vehicles. Suggested starting with a 14-day pilot using 10 vehicles. Sarah will send the operational requirements next Friday. Need to follow up.`;
+// Canonical copy: dataset/meeting-notes-my-sg.txt (Farhan's checklist quotes this text).
+export const SAMPLE_NOTES_EN = `Isaac meets Naim about KitaKantin, his app for small local food vendors. An indication of interest from both sides. They exchange numbers and agree to follow up. No date confirmed.
+
+Startup ASEAN networking event. Isaac runs KitaKantin. Naim is a potential partner. They talk about putting KitaKantin in front of Naim's food vendors. This is interest, not an agreement. No start date, no price, no signer.
+
+Open points, all still open:
+- Isaac will walk Naim's ops team through KitaKantin.
+- Isaac will send a one-page pilot scope.
+- Both sides will name an owner before any vendor goes live.
+
+No date was confirmed. Follow up this week or this goes cold like the other handshakes.`;
 
 export const SAMPLE_NOTES_MS = `Jumpa En. Hafiz dari Kedai Runcit Digital (Johor) masa sesi Startup ASEAN. Diorang ada 350 kedai runcit dalam rangkaian, nak cuba sistem e-invois kita sebab LHDN mandatory tahun depan. Hafiz cakap boleh mula dengan 20 kedai dulu, tapi kena present kat bos dia minggu depan. Dia minta deck + harga per kedai sebelum Isnin. Kena follow up cepat.`;
 
@@ -18,13 +28,13 @@ dewi@nusantara-agri.example
 Bandung, Indonesia
 Startup ASEAN 2026`;
 
-export const SAMPLE_EVIDENCE_MEETING = `From: Sarah Tan (Head of Operations, LintasExpress SG)
-Hi team, thanks for walking our ops leads through the route optimizer on yesterday's call — very useful session. We've agreed internally to proceed with the 14-day pilot on 10 vans, starting Monday. Ops requirements attached. Can you confirm onboarding by Friday?`;
+export const SAMPLE_EVIDENCE_MEETING = `From: Naim
+Thanks for walking our ops team through KitaKantin yesterday. We've agreed internally to proceed with the pilot, starting Monday.`;
 
-export const SAMPLE_EVIDENCE_POC = `From: Sarah Tan (Head of Operations, LintasExpress SG)
-Quick update: the 14-day pilot is now live on all 10 vans since Monday. Drivers are using the optimised routes daily and our dispatch team has signed off the setup. First weekly report shows fuel down 11%.`;
+export const SAMPLE_EVIDENCE_POC = `From: Naim
+Quick update: the KitaKantin pilot is now live with the first vendors since Monday. The first stalls are taking orders on it.`;
 
-export const SAMPLE_EVIDENCE_WEAK = `Heard from someone at the mixer that LintasExpress might sign with us soon, they seemed really keen. Should be a done deal!`;
+export const SAMPLE_EVIDENCE_WEAK = `Heard from someone at the mixer that KitaKantin already signed with Naim. Should be a done deal!`;
 
 // ── Canned Gemma outputs for demo mode (no API key) ─────────────────────────
 
@@ -80,36 +90,40 @@ export function cannedAnalysis(text: string, today: Date, hasImage = false): Ana
   }
   if (norm(text) === norm(SAMPLE_NOTES_EN)) {
     return {
-      title: "Singapore Logistics Partnership",
-      ourSide: { name: "Our team", country: "Malaysia" },
-      counterparty: { name: "Singapore logistics company", country: "Singapore" },
-      contacts: [{ name: "Sarah", organisation: "Singapore logistics company", role: "Operations contact" }],
+      title: "KitaKantin partnership",
+      ourSide: { name: "Isaac, KitaKantin", country: "Malaysia" },
+      counterparty: { name: "Naim", country: "Malaysia" },
+      contacts: [{ name: "Naim", organisation: "", role: "Potential partner" }],
       opportunity:
-        "Pilot our AI route optimizer on a Singapore delivery fleet of ~200 vehicles to cut route cost and time.",
-      sector: "Logistics / AI",
-      corridor: "Malaysia → Singapore",
+        "A possible partnership to bring KitaKantin to Naim's food vendors. Interest only. No date.",
+      sector: "Food / Marketplace",
+      corridor: "Malaysia",
       language: "English",
       keyTerms: [
-        { label: "Potential pilot", value: "14 days" },
-        { label: "Initial vehicles", value: "10" },
-        { label: "Fleet size", value: "~200" },
+        { label: "App", value: "KitaKantin" },
+        { label: "Interest", value: "Both sides" },
+        { label: "Date", value: "None confirmed" },
       ],
-      commitments: [{ claim: "Sarah will send operational requirements", quote: "Sarah will send the operational requirements next Friday" }],
+      commitments: [
+        { claim: "They agree to follow up", quote: "agree to follow up" },
+        { claim: "Isaac will walk the ops team through KitaKantin", quote: "Isaac will walk Naim's ops team through KitaKantin" },
+        { claim: "Isaac will send a one-page pilot scope", quote: "Isaac will send a one-page pilot scope" },
+      ],
       actions: [
-        { title: "Confirm Sarah's operational requirements", detail: "Chase if not received by the deadline.", owner: "Sarah (counterparty)", dueText: "next Friday", dueDate: nextWeekday(today, 5) },
-        { title: "Prepare a pilot proposal", detail: "Scope 10 vehicles × 14 days, name owners on both sides, define success criteria (km saved, on-time %).", owner: "Our team" },
-        { title: "Send the follow-up message", detail: "Review the draft below before sending.", owner: "Our team", dueText: "within 24h" },
-        { title: "Agree pilot success metrics", detail: "Baseline current route cost so the pilot result is measurable.", owner: "Both sides" },
+        { title: "Set a date with Naim", detail: "The follow-up was agreed and no date was confirmed.", owner: "Isaac", dueText: "this week" },
+        { title: "Walk Naim's ops team through KitaKantin", detail: "Do this before anyone calls it a pilot.", owner: "Isaac" },
+        { title: "Send the one-page pilot scope", detail: "Name the first vendors and what done means.", owner: "Isaac" },
+        { title: "Send the follow-up message", detail: "Review the draft below before sending.", owner: "Isaac", dueText: "this week" },
       ],
       followUp:
-        "Hi Sarah, great meeting you at Startup ASEAN. Following our discussion, we'd love to explore the 14-day route optimization pilot with 10 vehicles. Could you share your operational requirements so we can prepare a proposal?",
+        "Hi Naim, good to meet you. We agreed to follow up on KitaKantin and no date was confirmed. Can we set a time for me to walk your ops team through the app?",
       initialLevel: "proposed",
       evidence: [
-        { claim: "Counterparty is interested in a trial", quote: "They're interested in testing our AI route optimizer" },
-        { claim: "Fleet of ~200 vehicles", quote: "They have about 200 delivery vehicles" },
-        { claim: "Pilot is only suggested, not agreed", quote: "Suggested starting with a 14-day pilot using 10 vehicles" },
+        { claim: "Interest from both sides", quote: "An indication of interest from both sides" },
+        { claim: "Follow-up has no date", quote: "No date confirmed" },
+        { claim: "They agree only to follow up", quote: "agree to follow up" },
       ],
-      risks: ["Pilot is only suggested — no named decision-maker yet", "Company name not captured; confirm legal entity"],
+      risks: ["No date confirmed", "Interest only, nothing signed"],
     };
   }
   if (norm(text) === norm(SAMPLE_NOTES_MS)) {
@@ -152,8 +166,8 @@ export function cannedVerify(text: string): { findings: EvidenceFinding[]; summa
   if (t === norm(SAMPLE_EVIDENCE_MEETING)) {
     return {
       findings: [
-        { milestone: "meeting", level: "completed", quote: "thanks for walking our ops leads through the route optimizer on yesterday's call", rationale: "Counterparty confirms a working session took place." },
-        { milestone: "poc", level: "committed", quote: "We've agreed internally to proceed with the 14-day pilot on 10 vans, starting Monday", rationale: "Explicit agreement with scope and start date, but the pilot hasn't started." },
+        { milestone: "meeting", level: "completed", quote: "walking our ops team through KitaKantin", rationale: "Naim confirms the walkthrough happened." },
+        { milestone: "poc", level: "committed", quote: "We've agreed internally to proceed with the pilot, starting Monday", rationale: "Explicit agreement with a start date, but the pilot hasn't started." },
       ],
       summary: "Proves the meeting happened and the pilot is committed. Does not prove the pilot has launched.",
       confidence: 0.92,
@@ -162,8 +176,7 @@ export function cannedVerify(text: string): { findings: EvidenceFinding[]; summa
   if (t === norm(SAMPLE_EVIDENCE_POC)) {
     return {
       findings: [
-        { milestone: "poc", level: "completed", quote: "the 14-day pilot is now live on all 10 vans since Monday", rationale: "Head of Operations confirms the pilot is running." },
-        { milestone: "partnership", level: "proposed", quote: "First weekly report shows fuel down 11%", rationale: "Positive results, but no contract discussed yet." },
+        { milestone: "poc", level: "completed", quote: "now live with the first vendors since Monday", rationale: "Naim confirms the pilot is running." },
       ],
       summary: "Proves the POC launched. No signed agreement yet.",
       confidence: 0.9,
@@ -172,7 +185,7 @@ export function cannedVerify(text: string): { findings: EvidenceFinding[]; summa
   if (t === norm(SAMPLE_EVIDENCE_WEAK)) {
     return {
       findings: [
-        { milestone: "partnership", level: "proposed", quote: "might sign with us soon, they seemed really keen", rationale: "Second-hand rumour in future tense from someone without authority." },
+        { milestone: "partnership", level: "proposed", quote: "KitaKantin already signed with Naim", rationale: "Second-hand rumour from someone without authority." },
       ],
       summary: "Hearsay. Proves nothing; do not advance the deal.",
       confidence: 0.95,

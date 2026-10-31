@@ -30,10 +30,6 @@ q { quotes: "\201C" "\201D"; }
   border-bottom: 1px solid var(--sc-hairline);
 }
 .bar__mark { display: flex; align-items: center; gap: 0.55rem; font-weight: 600; letter-spacing: -0.01em; }
-.bar__logo {
-  display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 0.4rem;
-  background: var(--sc-accent); color: var(--sc-accent-ink); font-size: 0.8rem; font-weight: 700;
-}
 .bar__links { margin-left: auto; display: flex; align-items: center; gap: 1.25rem; font-size: 0.9rem; color: var(--sc-ink-soft); }
 .bar__links a:hover { color: var(--sc-ink); }
 .bar__links .bar__cta {

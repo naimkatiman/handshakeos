@@ -2,7 +2,7 @@
 
 Goal: give the existing website a recognizable, coherent family of dimensional icons, larger illustrations, and favicons without changing product behavior.
 
-Base: origin/main at a6d65c1e2bc943589c8e60ad82720e3d1d9ca37d. Isolated branch: feat/3d-visual-system-20261031. Other sessions own the release checkout and copy changes.
+Initial base: origin/main at a6d65c1e2bc943589c8e60ad82720e3d1d9ca37d. Rebased onto d57eb7e (the published tutorial) before final verification. Isolated branch: feat/3d-visual-system-20261031. Other sessions own the release checkout and copy changes.
 
 ## Approved execution assumptions
 
@@ -41,8 +41,20 @@ The user's request authorizes local visual implementation. Self-approved for loc
 
 ## Verification
 
-Run npm run typecheck and npm run build. Run scripts/verify-visuals.mjs against the isolated local server, using the existing Playwright installation. Inspect generated screenshots. Asset files are regenerated with node scripts/generate-visual-assets.mjs; no dependency installation is needed. Separate asset and UI commits if committing; no commit exceeds 15 files or 500 non-generated lines.
+Run npm run typecheck and npm run build -- --webpack. The isolated worktree reuses the existing node_modules through a local junction; Webpack resolves that junction without changing project configuration. Run scripts/verify-visuals.mjs against the local production server. Set PLAYWRIGHT_MODULE to an existing Playwright module and CHROMIUM_PATH to an existing browser if they are not on the normal module/browser paths. HANDSHAKE_TEST_ORIGIN defaults to http://localhost:3142. HANDSHAKE_VISUAL_OUTPUT selects a screenshot directory (default: the system temporary directory plus handshakeos-3d-verification). No Playwright dependency is added to the application.
+
+Asset files are regenerated with node scripts/generate-visual-assets.mjs. Regeneration was checked for byte-identical output. Asset and UI commits are separate; no commit exceeds 15 files or 500 non-generated lines.
 
 ## Status
 
-Baseline recorded on four routes at 320, 390, and 1440 pixels: zero new visual placements, no horizontal overflow. Nine original SVG assets total 32,888 bytes. First UI typecheck passes. The browser judge caught a five-pixel navigation overflow at 320 pixels after the larger brand mark; navigation spacing is being corrected. Refresh against the concurrently published tutorial before final verification.
+Verified 2026-10-31. Baseline: four routes at 320, 390, and 1440 pixels had zero new visual placements. Final: all 18 route/viewport checks pass across /, /ms, /capture, /dashboard, /versions, and a real /opportunity/[id]. No horizontal overflow, overlapping phone hero art, missing images, or browser runtime errors. Nine original SVG assets total 32,888 bytes against the 100 KB target. The largest asset is 8,368 bytes against the 20 KB target.
+
+Typecheck and the production Webpack build pass. The browser run uses the local production build. It verifies accessible home links, favicon metadata, normal hover and reduced-motion behavior, sample analysis, evidence confirmation, and hearsay rejection. The ICO directory and embedded PNGs were separately checked at 16, 32, and 48 pixels; the touch icon is 180 pixels. Screenshots were visually inspected on desktop and phone. HTTP 304 is accepted as a successful cached asset response.
+
+Local preview: http://localhost:3142. Screenshot directory: the system temporary directory plus handshakeos-3d-verification. No push, merge, or deployment was performed.
+
+The judge caught a five-pixel navigation overflow after the larger brand mark. The final navigation keeps all three links and exposes the model status to assistive technology at narrow widths. The phone hero uses separate grid rows for copy and artwork, so neither covers the other. The checker waits for SVG decoding after hydration before judging image loading. Dead styling for the replaced text-only brand tile was removed.
+
+Scope includes the current /versions page and the newly published tutorial. No changes to source copy, API behavior, storage, release scripts, package dependencies, or production deployment.
+
+The next outcome to measure is whether first-time users recognize the capture-to-evidence-to-outcome flow more readily. That requires user observation; no conversion or usability improvement is claimed from screenshots alone.

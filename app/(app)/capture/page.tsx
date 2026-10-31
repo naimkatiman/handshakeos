@@ -166,16 +166,15 @@ export default function CapturePage() {
     <div className="space-y-8">
       {job && <AuditOverlay text={job.text} preview={job.preview} model={model} startedAt={job.startedAt} found={found} />}
       <div className="visual-intro">
-      <div className="max-w-2xl pt-4">
-        <p className="text-sm font-medium text-accent">Startup ASEAN · Outcome Conversion</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Run a real conversation.</h1>
-        <p className="mt-3 text-muted">
-          Pick one of these, the way they actually arrive after an event. Gemma 4 extracts the deal, the commitments and the next
-          steps, and every claim is checked against what was actually said.
-        </p>
-      </div>
-
-      <Visual name="proof" size={225} className="visual-intro__art" />
+        <div className="max-w-2xl pt-4">
+          <p className="text-sm font-medium text-accent">Startup ASEAN · Outcome Conversion</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Run a real conversation.</h1>
+          <p className="mt-3 text-muted">
+            Pick one of these, the way they actually arrive after an event. Gemma 4 extracts the deal, the commitments and the next
+            steps, and every claim is checked against what was actually said.
+          </p>
+        </div>
+        <Visual name="proof" size={225} className="visual-intro__art" />
       </div>
       <div className="grid gap-3 md:grid-cols-3">
         <SampleTile icon="capture" disabled={busy} onClick={() => runSample("en")} label="Meeting notes · English" tag="Guided walkthrough">

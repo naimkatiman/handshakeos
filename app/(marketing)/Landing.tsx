@@ -1,6 +1,7 @@
 "use client";
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
+import HeroNetwork from "./HeroNetwork";
 
 type ScrollCraftApi = { destroy: () => void };
 declare global {
@@ -116,6 +117,7 @@ export default function Landing() {
               <img src="/landing/hero-plate.jpg" alt="" />
             </div>
             <div className="hero__scrim" aria-hidden="true" />
+            <HeroNetwork />
             <div className="hero__copy" data-sc-cue="0 0.7 0">
               <p className="eyebrow">For Startup ASEAN founders and ecosystem teams</p>
               <h1 className="hero__title">Prove the deal, not the handshake.</h1>
@@ -132,10 +134,6 @@ export default function Landing() {
               <div className="chip chip--a" data-sc-parallax="0.22">
                 <span className="stamp stamp--committed">Committed</span>
                 <q>We&apos;ve agreed internally to proceed</q>
-              </div>
-              <div className="chip chip--b" data-sc-parallax="0.38">
-                <span className="stamp stamp--rejected">Hearsay</span>
-                <q>Should be a done deal!</q>
               </div>
             </div>
           </div>

@@ -74,7 +74,7 @@ q { quotes: "\201C" "\201D"; }
               linear-gradient(0deg, rgb(11 15 20 / 0.8) 0%, transparent 30%);
 }
 .hero__copy {
-  position: absolute; z-index: 3; right: var(--gutter); top: 50%; translate: 0 -46%;
+  position: absolute; z-index: 4; right: var(--gutter); top: 50%; translate: 0 -46%;
   width: min(36rem, calc(100% - 2 * var(--gutter)));
 }
 .eyebrow { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sc-accent); margin: 0 0 1rem; }
@@ -84,7 +84,9 @@ q { quotes: "\201C" "\201D"; }
 }
 .hero__lede { margin: 1.4rem 0 0; max-width: 34rem; font-size: clamp(1rem, 1.3vw, 1.15rem); line-height: 1.55; color: var(--sc-ink-soft); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
-.hero__chips { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.hero__net { position: absolute; inset: 0 auto 0 0; z-index: 2; width: 60%; height: 100%; -webkit-mask-image: linear-gradient(90deg, #000 70%, transparent); mask-image: linear-gradient(90deg, #000 70%, transparent); pointer-events: none; opacity: 0; transition: opacity 600ms ease; }
+.hero__net[data-ready] { opacity: 1; }
+.hero__chips { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
 .chip {
   position: absolute; display: flex; flex-direction: column; gap: 0.6rem; max-width: 19rem;
   padding: 1rem 1.1rem; border-radius: 0.9rem;
@@ -94,15 +96,16 @@ q { quotes: "\201C" "\201D"; }
   font-size: 1rem; line-height: 1.4;
 }
 .chip .stamp { align-self: flex-start; }
-.chip--a { left: 24vw; top: 30vh; }
+.chip--a { left: 7vw; top: 64vh; }
 .chip--b { left: 9vw; top: 52vh; }
 .chip--b q { text-decoration: line-through; text-decoration-color: var(--danger); color: var(--sc-ink-soft); }
 @media (max-width: 860px) {
   .hero__scrim { background: linear-gradient(0deg, rgb(11 15 20 / 0.97) 0%, rgb(11 15 20 / 0.86) 48%, rgb(11 15 20 / 0.1) 75%); }
   .hero__copy { top: auto; bottom: clamp(1.5rem, 6vh, 3rem); translate: none; right: auto; left: var(--gutter); }
   .hero__plate img { object-position: 38% 50%; }
-  .chip--a { left: auto; right: var(--gutter); top: 11vh; max-width: 15rem; font-size: 0.9rem; }
+  .chip--a { display: none; }
   .chip--b { display: none; }
+  .hero__net { width: 100%; height: 62%; -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent); mask-image: linear-gradient(180deg, #000 70%, transparent); }
 }
 
 /* ── 2 tension ───────────────────────────────────────────────────────── */

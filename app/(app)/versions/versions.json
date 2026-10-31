@@ -105,7 +105,7 @@
   "why": "Someone watching the page or the demo had no zero-typing way to try the product in their own hands."
  },
  {
-  "v": "v20",
+  "v": "v21",
   "change": "Cost protection for the paid model keys: Cloudflare Workers Rate Limiting caps model calls at 10 per minute per visitor IP across `/api/analyze` and `/api/verify` (`lib/ratelimit.ts`, binding `MODEL_LIMIT`). Over the cap, built-in samples still answer from their recording (marked fallback) so a demo never dies; anything else gets a clear 429. `/api/verify` gains the 20k-character cap analyze already had. Fails open if the limiter is unavailable. Judge: 12 rapid live calls from one IP on production, the excess refused with 429, a built-in sample still answered while limited.",
   "why": "The public site spends a paid OpenRouter and Gemini key on every request with no limit; one script could drain the credit."
  }

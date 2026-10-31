@@ -148,5 +148,10 @@
   "v": "v29",
   "change": "Docked guide: when the Prove-it panel scrolls out of view, its current step and single action (\"Verify the reply\", \"Confirm: POC launched\", \"Send the rumour\", \"Reject it\") dock as a bar at the bottom of the screen, with a link back to the guide; it hides again when the panel is visible. Picked from the D1 funnel: all 8 recorded plans came through the guided path, but only 4 sessions pressed the first guide button and 2 finished (small, mostly scripted sample). Judge (390x844, live Gemma): no dock at the top, dock appears after scrolling, three steps completed from the dock alone, deal reached \"Verified: POC launched\", dock hidden again at the top.",
   "why": "The guide's next action sat in a panel that scrolled away as soon as a visitor started reading the plan."
+ },
+ {
+  "v": "v30",
+  "change": "Returning visitors see what to do on every deal: once they have deals, Capture opens with \"Your deals · what to do next\", overdue deals first, each card showing its Next best move (v28 rules) and linking straight to that section of the deal. Judge: fresh browser shows no list; with two real deals and one overdue action, the overdue Nusantara deal is first with \"Do it now: Draft pilot proposal\" linking to `#actions`, then Kedai Runcit with \"Send the follow-up while it is warm\" linking to `#followup`.",
+  "why": "Returning users landed on sample tiles and had to open each deal to find out what they owed."
  }
 ]

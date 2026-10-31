@@ -29,7 +29,10 @@ function toCSV(opps: Opportunity[]) {
 export default function Dashboard() {
   const all = useOpportunities();
   const [mounted, setMounted] = useState(false);
-  const [includeSeed, setIncludeSeed] = useState(true);
+  // null = automatic: show the illustrative deals only until the visitor has captured one of their own.
+  const [seedChoice, setSeedChoice] = useState<boolean | null>(null);
+  const realCount = all.filter((o) => !o.illustrative).length;
+  const includeSeed = seedChoice ?? realCount === 0;
   // A country ("Malaysia") or an exact corridor ("Malaysia → Singapore"); matches by substring of the corridor.
   const [filter, setFilter] = useState<string | null>(null);
   useEffect(() => {
@@ -82,12 +85,24 @@ export default function Dashboard() {
           <p className="mt-1 max-w-xl text-sm text-muted">
             Only evidence-backed, human-confirmed milestones count. Drafts, proposed pilots and hearsay don&apos;t.
           </p>
+          <p className="mt-2 text-sm font-medium">
+            {realCount === 0 ? (
+              <>
+                You are looking at illustrative ASEAN deals.{" "}
+                <Link href="/capture" className="text-accent underline">Run one of your own</Link> and this funnel switches to yours.
+              </>
+            ) : includeSeed ? (
+              <>Your {realCount} deal{realCount === 1 ? "" : "s"} plus the illustrative set.</>
+            ) : (
+              <>Your {realCount} deal{realCount === 1 ? "" : "s"} only.</>
+            )}
+          </p>
           </div>
         </div>
         {hasSeed && (
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={includeSeed} onChange={(e) => setIncludeSeed(e.target.checked)} className="h-4 w-4 accent-[var(--color-accent)]" />
-            Include illustrative data
+            <input type="checkbox" checked={includeSeed} onChange={(e) => setSeedChoice(e.target.checked)} className="h-4 w-4 accent-[var(--color-accent)]" />
+            Include illustrative deals
           </label>
         )}
       </div>
@@ -151,7 +166,11 @@ export default function Dashboard() {
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-sm font-medium">
                         {o.analysis.title}
-                        {!o.illustrative && <span className="ml-2 rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold text-accent">LIVE</span>}
+                        {o.illustrative ? (
+                          <span className="ml-2 rounded bg-paper px-1.5 py-0.5 text-[10px] font-semibold text-muted">ILLUSTRATIVE</span>
+                        ) : (
+                          <span className="ml-2 rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold text-accent">YOURS</span>
+                        )}
                       </div>
                       <div className="truncate text-xs text-muted">{o.analysis.corridor}</div>
                     </div>

@@ -17,7 +17,8 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
-  experimental: { serverActions: { bodySizeLimit: "8mb" } },
+  // globalNotFound: one branded 404 that works across both root layouts, (app) and (marketing).
+  experimental: { serverActions: { bodySizeLimit: "8mb" }, globalNotFound: true },
   async headers() {
     return [
       {

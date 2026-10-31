@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Landing from "../Landing";
 
 export const metadata: Metadata = {
-  title: "HandshakeOS · Buktikan perjanjian, bukan sekadar jabat tangan",
-  description: "HandshakeOS membaca perbualan networking anda, menyemak setiap dakwaan dengan apa yang benar-benar dikatakan, dan hanya mengira langkah perkongsian apabila buktinya sahih.",
+  title: "HandshakeOS · Kemudian, tiada apa yang berlaku",
+  description: "Isaac pulang dari acara networking dengan jabat tangan dan tanpa tarikh. HandshakeOS menukar perbualan itu kepada peluang, dan hanya mengira langkah apabila buktinya sahih.",
   alternates: { canonical: "/ms", languages: { en: "/", ms: "/ms" } },
   openGraph: { locale: "ms_MY" },
 };

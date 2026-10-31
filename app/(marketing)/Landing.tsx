@@ -18,27 +18,27 @@ const CTA_HREF = "/capture?sample=en&run=1";
 // npx qrcode@1.5.4 -t svg -e M -q 2 -d "#0b0f14" -l "#f2efe8" -o public/landing/try.svg "<SITE_URL><CTA_HREF>"
 const SITE_URL = "https://handshakeos.m-naim.workers.dev";
 
-// One fictional deal, told in the four messages the samples in lib/samples.ts are built from.
+// KitaKantin night. The same words are the English sample the deal button opens.
 const THREAD = [
   {
-    before: "Met Singapore logistics team. They're interested in testing our AI route optimizer. ",
-    quote: "Suggested starting with a 14-day pilot",
-    after: " using 10 vehicles. Sarah will send the operational requirements next Friday.",
+    before: "Isaac meets Naim about KitaKantin, his app for small local food vendors. ",
+    quote: "An indication of interest",
+    after: " from both sides. They exchange numbers and agree to follow up. No date confirmed.",
   },
   {
     before: "Thanks for ",
-    quote: "walking our ops leads through the route optimizer on yesterday's call",
-    after: ". We've agreed internally to proceed with the 14-day pilot on 10 vans, starting Monday.",
+    quote: "walking our ops team through KitaKantin",
+    after: " yesterday. We've agreed internally to proceed with the pilot, starting Monday.",
   },
   {
     before: "",
     quote: "Heard from someone at the mixer",
-    after: " that LintasExpress might sign with us soon, they seemed really keen. Should be a done deal!",
+    after: " that KitaKantin already signed with Naim. Should be a done deal!",
   },
   {
-    before: "Quick update: the 14-day pilot is ",
-    quote: "now live on all 10 vans since Monday",
-    after: ". Drivers are using the optimised routes daily.",
+    before: "Quick update: the KitaKantin pilot is ",
+    quote: "now live with the first vendors since Monday",
+    after: ". The first stalls are taking orders on it.",
   },
 ];
 
@@ -149,15 +149,9 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
               <p className="hero__lede">{t.lede}</p>
               <div className="hero__actions">
                 <a className="btn btn--accent" href={CTA_HREF} onClick={() => track("cta_click", { where: "hero" })}>{t.cta}</a>
-                <a className="btn btn--ghost" href="#audit">{t.watch}</a>
+                <a className="btn btn--ghost" href="#problem">{t.watch}</a>
               </div>
               {proof}
-            </div>
-            <div className="hero__chips" aria-hidden="true">
-              <div className="chip chip--a" data-sc-parallax="0.22">
-                <span className="stamp stamp--committed">{t.committed}</span>
-                <q>We&apos;ve agreed internally to proceed</q>
-              </div>
             </div>
           </div>
         </section>
@@ -172,7 +166,37 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
           </div>
         </section>
 
-        {/* 3 · Peak: the audit. Four real messages, one verdict each. The hearsay is the moment. */}
+        {/* 3 · Problem statement, then the solution, in Isaac's words. */}
+        <section id="problem" className="pitch" data-sc-act="flow" data-sc-drift="#0b0f14">
+          <div className="pitch__wrap">
+            <div data-sc-in>
+              <p className="eyebrow">{t.problemKicker}</p>
+              <h2>{t.problemHead}</h2>
+              <p>{t.problemBody}</p>
+            </div>
+            <div data-sc-in>
+              <p className="eyebrow">{t.solutionKicker}</p>
+              <h2>{t.solutionHead}</h2>
+              <p>{t.solutionLede}</p>
+              <div className="pitch__maphead" aria-hidden="true">
+                <span>{t.problemCol}</span>
+                <span>{t.solutionCol}</span>
+              </div>
+              <dl className="pitch__map">
+                {t.solutionRows.map((row) => (
+                  <div key={row.problem} data-sc-in>
+                    <dt>{row.problem}</dt>
+                    <dd>{row.answer}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p>{t.solutionBody}</p>
+              <p>{t.solutionProof}</p>
+            </div>
+          </div>
+        </section>
+
+        {/* 4 · Peak: the audit. Four real messages, one verdict each. The hearsay is the moment. */}
         <section
           id="audit"
           ref={audit}
@@ -185,6 +209,7 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
             <div className="audit__head">
               <Visual name="evidence" size={64} />
               <h2>{t.auditHead}</h2>
+              <p className="audit__note">{t.auditNote}</p>
             </div>
             <ol className="thread">
               {THREAD.map((m, i) => {

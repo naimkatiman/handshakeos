@@ -3,7 +3,7 @@ import "./(app)/globals.css";
 
 export const metadata: Metadata = {
   title: "HandshakeOS · Not found",
-  description: "That link does not exist. Run a real deal instead.",
+  description: "That link does not exist. Run the KitaKantin deal instead.",
 };
 
 // One 404 for both root layouts. A dead link still gets a way into the product.
@@ -24,7 +24,7 @@ export default function GlobalNotFound() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="/capture?sample=en&run=1" className="inline-flex items-center rounded-lg bg-accent px-5 py-3 text-sm font-semibold text-accent-ink hover:brightness-110">
-              Run a real deal
+              Run the KitaKantin deal
             </a>
             <a href="/" className="inline-flex items-center rounded-lg border border-line px-5 py-3 text-sm font-semibold hover:border-ink/40">
               Home

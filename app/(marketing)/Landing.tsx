@@ -13,6 +13,9 @@ declare global {
 }
 
 const CTA_HREF = "/capture?sample=en&run=1";
+// public/landing/try.svg encodes SITE_URL + CTA_HREF. Regenerate it if either changes:
+// npx qrcode@1.5.4 -t svg -e M -q 2 -d "#0b0f14" -l "#f2efe8" -o public/landing/try.svg "<SITE_URL><CTA_HREF>"
+const SITE_URL = "https://handshakeos.m-naim.workers.dev";
 
 // One fictional deal, told in the four messages the samples in lib/samples.ts are built from.
 const THREAD = [
@@ -133,8 +136,8 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
         <section data-sc-act="scrub" data-sc-span="1.6" data-sc-dwell="0.3" data-sc-drift="#0b0f14" className="hero">
           <div data-sc-stage className="hero__stage">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="sc-stage__poster hero__media" src="/landing/hero-plate.jpg" alt="" />
-            <video className="hero__media" data-sc-scrub data-sc-src="/landing/hero-dolly.mp4" data-sc-src-mobile="/landing/hero-dolly-m.mp4" muted playsInline />
+            <img className="sc-stage__poster hero__media hero__poster" src="/landing/hero-plate.jpg" alt="" />
+            <video className="hero__media hero__clip" data-sc-scrub data-sc-src="/landing/hero-dolly.mp4" data-sc-src-mobile="/landing/hero-dolly-portrait.mp4" muted playsInline />
             <div className="hero__scrim" aria-hidden="true" />
             <HeroNetwork />
             <div className="hero__copy" data-sc-cue="0 0.7 0">
@@ -279,13 +282,48 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
               </form>
               {proof}
             </div>
-            <footer className="foot">
-              <span>{t.foot}</span>
-              <span>{t.powered}</span>
-            </footer>
+          </div>
+        </section>
+
+        {/* 6 · Hand-off: the visitor's own phone becomes the demo. Same deep link as the CTA, so the guided deal runs on scan. */}
+        <section className="pocket" data-sc-act="flow" data-sc-drift="#0b0f14">
+          <div className="pocket__wrap">
+            <div data-sc-in>
+              <h2 className="pocket__head">{t.pocket.head}</h2>
+              <ol className="steps" data-sc-in data-sc-stagger="90">
+                {t.pocket.steps.map((s, i) => (
+                  <li key={s.title}>
+                    <span className="steps__n">{i + 1}</span>
+                    <div className={i === 0 ? "steps__scan" : undefined}>
+                      <p className="steps__title">{s.title}</p>
+                      <p className="steps__text">{s.text}</p>
+                    </div>
+                    {i === 0 && (
+                      <div className="steps__tap">
+                        <p className="steps__title">{t.pocket.first.title}</p>
+                        <p className="steps__text">{t.pocket.first.text}</p>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ol>
+              <a className="btn btn--accent pocket__phone" href={CTA_HREF} onClick={() => track("cta_click", { where: "pocket" })}>{t.pocket.phone}</a>
+            </div>
+            <figure className="qr" data-sc-in>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/landing/try.svg" alt={`QR code: ${SITE_URL.replace("https://", "")}`} width={240} height={240} />
+              <figcaption>
+                <span className="qr__cue">{t.pocket.scan}</span>
+                <span className="qr__url">{SITE_URL.replace("https://", "")}</span>
+              </figcaption>
+            </figure>
           </div>
         </section>
       </main>
+      <footer className="foot">
+        <span>{t.foot}</span>
+        <span>{t.powered}</span>
+      </footer>
     </>
   );
 }

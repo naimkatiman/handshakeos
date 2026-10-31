@@ -15,7 +15,7 @@ export default function Nav() {
     return (
       <Link
         href={href}
-        className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${active ? "bg-ink text-paper" : "text-muted hover:text-ink"}`}
+        className={`rounded-md px-2 py-1.5 text-sm font-medium transition sm:px-3 ${active ? "bg-ink text-paper" : "text-muted hover:text-ink"}`}
       >
         {label}
       </Link>
@@ -26,12 +26,13 @@ export default function Nav() {
     <header className="sticky top-0 z-20 border-b border-line bg-paper/90 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <span className="grid h-7 w-7 place-items-center rounded-md bg-accent text-[13px] text-white">H</span>
+          <span className="grid h-7 w-7 place-items-center rounded-md bg-accent text-[13px] text-accent-ink">H</span>
           <span className="hidden sm:inline">HandshakeOS</span>
         </Link>
         <nav className="ml-2 flex gap-1">
           {tab("/capture", "Capture")}
           {tab("/dashboard", "Outcomes")}
+          {tab("/versions", "Versions")}
         </nav>
         <div className="ml-auto">
           {status && (

@@ -4,6 +4,7 @@ import type { EngineInfo } from "@/lib/types";
 import { verifyPrompt } from "@/lib/prompts";
 import { cannedVerify } from "@/lib/samples";
 import { normalizeFindings } from "@/lib/normalize";
+import { modelCallAllowed, RATE_LIMITED } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -17,6 +18,7 @@ interface Body {
 export async function POST(req: Request) {
   const { text = "", image, context } = (await req.json()) as Body;
   if (!text.trim() && !image) return NextResponse.json({ error: "Paste a message or upload a screenshot/document." }, { status: 400 });
+  if (text.length > 20_000) return NextResponse.json({ error: "Input too long (20k chars max)." }, { status: 413 });
 
   const canned = image ? null : cannedVerify(text);
   const pack = (
@@ -37,6 +39,11 @@ export async function POST(req: Request) {
       { error: "Demo mode: only the built-in sample evidence works without a key. Add OPENROUTER_API_KEY." },
       { status: 400 },
     );
+  }
+
+  if (!(await modelCallAllowed(req))) {
+    if (canned) return pack(canned, "fallback");
+    return NextResponse.json({ error: RATE_LIMITED }, { status: 429 });
   }
 
   const t0 = Date.now();

@@ -97,15 +97,17 @@ q { quotes: "\201C" "\201D"; }
 }
 .chip .stamp { align-self: flex-start; }
 .chip--a { left: 7vw; top: 64vh; }
-.chip--b { left: 9vw; top: 52vh; }
-.chip--b q { text-decoration: line-through; text-decoration-color: var(--danger); color: var(--sc-ink-soft); }
+/* Phones get their own composition: copy over the sky, the table with last night's card left in view below it.
+   The portrait clip is already cropped onto the card; the landscape poster is positioned to match it. */
 @media (max-width: 860px) {
-  .hero__scrim { background: linear-gradient(0deg, rgb(11 15 20 / 0.97) 0%, rgb(11 15 20 / 0.86) 48%, rgb(11 15 20 / 0.1) 75%); }
-  .hero__copy { top: auto; bottom: clamp(1.5rem, 6vh, 3rem); translate: none; right: auto; left: var(--gutter); }
-  .hero__stage .hero__media { object-position: 38% 50%; }
+  .hero__scrim { background: linear-gradient(180deg, rgb(11 15 20 / 0.96) 0%, rgb(11 15 20 / 0.82) 50%, rgb(11 15 20 / 0) 68%); }
+  .hero__copy { top: 5.6rem; bottom: auto; translate: none; right: auto; left: var(--gutter); }
+  .hero__lede { font-size: 0.95rem; margin-top: 1rem; }
+  .hero__actions { margin-top: 1.25rem; }
+  .hero__stage .hero__poster { object-position: 24% 50%; }
+  .hero__stage .hero__clip { object-position: 50% 50%; }
+  .hero__net { display: none; }
   .chip--a { display: none; }
-  .chip--b { display: none; }
-  .hero__net { width: 100%; height: 62%; -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent); mask-image: linear-gradient(180deg, #000 70%, transparent); }
 }
 
 /* live proof counters (real numbers from D1) */
@@ -238,6 +240,33 @@ q { quotes: "\201C" "\201D"; }
 .own__box:focus { outline: none; border-color: var(--sc-accent); box-shadow: 0 0 0 3px rgb(79 209 174 / 0.18); }
 .own__go { grid-column: 2; justify-self: end; background: rgb(255 255 255 / 0.06); font: inherit; font-weight: 600; cursor: pointer; }
 .own__go:disabled { opacity: 0.45; cursor: not-allowed; }
+/* ── 6 pocket: scan and run it on your own phone ─────────────────────── */
+.pocket { padding: clamp(4.5rem, 12vh, 8rem) var(--gutter); border-top: 1px solid var(--sc-hairline); }
+.pocket__wrap { max-width: 64rem; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(2rem, 6vw, 5rem); align-items: center; }
+.pocket__head { margin: 0; font-size: clamp(1.9rem, 3.6vw, 3rem); line-height: 1.04; letter-spacing: -0.035em; font-weight: 600; max-width: 18ch; }
+.steps { list-style: none; margin: 2rem 0 0; padding: 0; display: grid; gap: 1.4rem; }
+.steps li { display: grid; grid-template-columns: 2.2rem 1fr; gap: 1rem; align-items: start; }
+.steps__n {
+  display: grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 999px;
+  border: 1px solid var(--sc-accent); color: var(--sc-accent); font-family: var(--mono); font-size: 0.9rem;
+}
+.steps__title { margin: 0.2rem 0 0; font-weight: 600; font-size: 1.08rem; }
+.steps__text { margin: 0.3rem 0 0; color: var(--sc-ink-soft); line-height: 1.55; max-width: 34rem; }
+.pocket__phone { display: inline-flex; margin-top: 2rem; }
+.steps__tap { display: none; }
+.qr { margin: 0; padding: 1.1rem 1.1rem 1rem; border-radius: 1.25rem; background: var(--paper); color: var(--paper-ink); text-align: center; box-shadow: 0 0 0 1px rgb(79 209 174 / 0.35), 0 24px 60px -20px rgb(79 209 174 / 0.35); }
+.qr img { display: block; width: clamp(11rem, 20vw, 15rem); height: auto; image-rendering: pixelated; }
+.qr figcaption { display: grid; gap: 0.2rem; margin-top: 0.8rem; }
+.qr__cue { font-weight: 600; font-size: 0.95rem; }
+.qr__url { font-family: var(--mono); font-size: 0.7rem; color: #4d535b; }
+/* On a phone the visitor is already holding the device: swap the code for a button. */
+@media (max-width: 860px) {
+  .pocket__wrap { grid-template-columns: 1fr; }
+  .qr, .steps__scan { display: none; }
+  .steps__tap { display: block; }
+  .pocket__phone { display: inline-flex; }
+}
+
 .foot {
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem;
   padding: 1.25rem var(--gutter); border-top: 1px solid var(--sc-hairline);

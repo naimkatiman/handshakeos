@@ -64,9 +64,9 @@ export function Spinner() {
 
 export const btn = {
   primary:
-    "inline-flex items-center justify-center gap-2 rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-paper transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40",
+    "inline-flex items-center justify-center gap-2 rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-paper transition hover:brightness-90 disabled:cursor-not-allowed disabled:opacity-40",
   accent:
-    "inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40",
+    "inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40",
   ghost:
     "inline-flex items-center justify-center gap-1.5 rounded-lg border border-line bg-card px-3 py-2 text-sm font-medium text-ink transition hover:border-ink/30 disabled:opacity-40",
   chip: "rounded-full border border-line bg-card px-3 py-1.5 text-xs font-medium text-ink transition hover:border-ink/40",

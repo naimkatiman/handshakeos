@@ -6,6 +6,8 @@
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "vars": { "GEMMA_MODEL": "google/gemma-4-26b-a4b-it", "GEMINI_MODEL": "gemini-flash-lite-latest" },
+  // Per-visitor cap on paid model calls: 10 per minute per IP across /api/analyze and /api/verify.
+  "ratelimits": [{ "name": "MODEL_LIMIT", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } }],
   "d1_databases": [
     { "binding": "DB", "database_name": "handshakeos-events", "database_id": "1029a78c-610c-4801-a739-8506c1301a5c", "migrations_dir": "migrations" }
   ]

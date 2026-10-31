@@ -13,6 +13,8 @@ export default function HeroNetwork() {
   useEffect(() => {
     const el = canvas.current;
     if (!el) return;
+    // Phones get the art-directed clip instead of the card field: less clutter, no WebGL battery cost.
+    if (innerWidth < 860) return;
     let disposed = false;
     let cleanup = () => {};
 

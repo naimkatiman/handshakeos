@@ -1,5 +1,10 @@
 import "server-only";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { hedge } from "./hedge";
+
+/** Start the backup provider if the primary has not answered by now (normal Gemma 4 answers land in 3 to 15 s). */
+const HEDGE_MS = 15_000;
+const CALL_TIMEOUT_MS = 45_000;
 
 const OPENROUTER = "https://openrouter.ai/api/v1/chat/completions";
 const GEMINI = "https://generativelanguage.googleapis.com/v1beta/models";
@@ -79,7 +84,7 @@ function errorMessage(err: string): string {
   return redact(msg);
 }
 
-async function openRouter<T>(prompt: string, image: ImageInput | undefined, key: string): Promise<T> {
+async function openRouter<T>(prompt: string, image: ImageInput | undefined, key: string, signal: AbortSignal): Promise<T> {
   const textPart = { type: "text", text: prompt };
   const content = image
     ? [{ type: "image_url", image_url: { url: `data:${image.mimeType};base64,${image.data}` } }, textPart]
@@ -100,7 +105,7 @@ async function openRouter<T>(prompt: string, image: ImageInput | undefined, key:
       reasoning: { enabled: false },
       messages: [{ role: "user", content }],
     }),
-    signal: AbortSignal.timeout(60_000),
+    signal: AbortSignal.any([signal, AbortSignal.timeout(CALL_TIMEOUT_MS)]),
   });
 
   if (!res.ok) throw new Error(`OpenRouter ${res.status}: ${errorMessage(await res.text())}`);
@@ -108,7 +113,7 @@ async function openRouter<T>(prompt: string, image: ImageInput | undefined, key:
   return parseJSON<T>(messageText(json?.choices?.[0]?.message));
 }
 
-async function gemini<T>(prompt: string, image: ImageInput | undefined, key: string, model: string): Promise<T> {
+async function gemini<T>(prompt: string, image: ImageInput | undefined, key: string, model: string, signal: AbortSignal): Promise<T> {
   const parts: Record<string, unknown>[] = [];
   if (image) parts.push({ inlineData: { mimeType: image.mimeType, data: image.data } });
   parts.push({ text: prompt });
@@ -120,7 +125,7 @@ async function gemini<T>(prompt: string, image: ImageInput | undefined, key: str
       contents: [{ role: "user", parts }],
       generationConfig: { temperature: 0.2, maxOutputTokens: 4096 },
     }),
-    signal: AbortSignal.timeout(60_000),
+    signal: AbortSignal.any([signal, AbortSignal.timeout(CALL_TIMEOUT_MS)]),
   });
 
   if (!res.ok) throw new Error(`Gemini ${res.status}: ${errorMessage(await res.text())}`);
@@ -138,28 +143,22 @@ async function gemini<T>(prompt: string, image: ImageInput | undefined, key: str
  * defensively because models sometimes wrap it in fences.
  */
 export async function gemmaJSON<T>(prompt: string, image?: ImageInput): Promise<GemmaCall<T>> {
-  const errors: string[] = [];
   const openRouterKey = readEnv("OPENROUTER_API_KEY");
-  if (openRouterKey) {
-    try {
-      return { value: await openRouter<T>(prompt, image, openRouterKey), via: "OpenRouter", model: modelName() };
-    } catch (e) {
-      errors.push((e as Error).message);
-    }
-  }
-
   const geminiKey = readEnv("GEMINI_API_KEY");
   const model = readEnv("GEMINI_MODEL") || DEFAULT_GEMINI_MODEL;
-  if (geminiKey) {
-    try {
-      return { value: await gemini<T>(prompt, image, geminiKey, model), via: "Gemini", model };
-    } catch (e) {
-      errors.push((e as Error).message);
-    }
+  const viaGemini = geminiKey
+    ? (signal: AbortSignal) => gemini<T>(prompt, image, geminiKey, model, signal).then((value) => ({ value, via: "Gemini" as const, model }))
+    : null;
+  if (!openRouterKey) {
+    if (!viaGemini) throw new Error("No model key is set");
+    return viaGemini(new AbortController().signal);
   }
-
-  if (!errors.length) throw new Error("No model key is set");
-  throw new Error(errors.join(" | "));
+  // Gemma 4 stays primary. If it is slow or fails, Gemini races it and the first good answer wins.
+  return hedge(
+    (signal) => openRouter<T>(prompt, image, openRouterKey, signal).then((value) => ({ value, via: "OpenRouter" as const, model: modelName() })),
+    viaGemini,
+    HEDGE_MS,
+  );
 }
 
 export function parseJSON<T>(raw: string): T {

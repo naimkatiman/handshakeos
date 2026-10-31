@@ -1,0 +1,112 @@
+[
+ {
+  "v": "v0",
+  "change": "Served from Cloudflare Workers via OpenNext. No product change.",
+  "why": "Baseline."
+ },
+ {
+  "v": "v1",
+  "change": "`/` is now a scroll-driven story (scroll-craft engine): layered Grok hero, a live audit of a four-message deal as the peak, a light \"three levels\" act, a close with one CTA. The tool moved to `/capture`, which accepts `?sample=en|ms|card&run=1` so the CTA lands on a finished action plan in one click. Favicon added.",
+  "why": "The old home opened on an empty textarea with a disabled button: the visitor had to understand the product before seeing it."
+ },
+ {
+  "v": "v2",
+  "change": "\"Prove it\" guide on the opportunity page for visitors from the landing CTA: verify Sarah's reply, confirm it, then try to fool the engine with a rumour and watch it get refused. verify/decide extracted into shared functions. Judge: landing to verified POC in 3 clicks, 1.0 s (Playwright).",
+  "why": "v1 landed visitors on six dense cards with the Evidence Engine buried: the aha the landing promised needed 4+ unguided clicks."
+ },
+ {
+  "v": "v3",
+  "change": "three.js hero layer: ~150 business cards (drawn card faces, instanced) float over the KL plate; six verified ones light teal and thread to you, the rest drift off and fade as the hero scrolls. Pointer steers the rig. Loaded on demand, paused off screen, one still frame under reduced motion, confined to the left 60% so copy stays clean. Judge: 60 fps headless at 1440x900, copy unobstructed, reduced-motion frame renders.",
+  "why": "The hero said \"stop collecting contacts\" in words only; now the first screen shows it."
+ },
+ {
+  "v": "v4",
+  "change": "Outcomes page gets a three.js ASEAN corridor map: real capital coordinates, an arc per corridor coloured by its furthest confirmed stage, particles only where a deal moved past Introduced, rings for domestic deals. City labels are real buttons that filter the opportunity list; corridor table rows filter too. Fixed a pre-existing mobile overflow (dashboard was 420px wide on a 390px phone) by giving the grid `minmax(0,…)` columns. Judge: Philippines filter 20 to 3, all Philippine corridors; no horizontal overflow at 390 and 1366 on /, /capture, /dashboard.",
+  "why": "The ecosystem view, the one thing Startup ASEAN cares about, was a plain table under a spreadsheet."
+ },
+ {
+  "v": "v5",
+  "change": "Hero becomes a scroll-scrubbed Grok image-to-video shot (from the v1 plate): the camera dollies in toward last night's business card while the three.js noise cards fall away. Encoded for scrubbing (720p GOP 8, mobile 480p GOP 4, audio stripped); plate stays as poster, reduced motion never fetches the clip. Judge: playhead tracks scroll on desktop and 390px (0, 1.1, 1.9 s at p 0, 0.39, 0.65), clip visible after first seek, no page errors.",
+  "why": "The hero was a still photo with a parallax; the first scroll now moves the visitor into the scene."
+ },
+ {
+  "v": "v6",
+  "change": "Capture page leads with three one-click conversations shown as the real artifacts (English notes, a Bahasa Melayu WhatsApp bubble, the business-card photo); the English one opens the guided Prove-it flow. \"Paste your own\" now says up front that the public demo has no Gemini key. Fixed a pre-existing bug: the business-card sample could never run in Demo mode (analyze route skipped canned output whenever an image was attached and no card result existed); added a recorded card analysis whose transcript is the card's exact text, so every quote stays grounded. Judge: each tile reaches a finished plan in one click (215 to 340 ms), 0 ungrounded quotes, no overflow at 390.",
+  "why": "\"Paste your own notes\" led to a box that errored only after the visitor typed and clicked; the card sample errored outright."
+ },
+ {
+  "v": "v7",
+  "change": "The public app calls open-weight Gemma 4 through OpenRouter (`google/gemma-4-26b-a4b-it`, paid route). The header says Gemma 4 live. Each result names the model, the provider, and the seconds. Own notes work. The scripted audit is a real call, with the canned sample kept only if that call throws.",
+  "why": "Judges were watching a recording. The badge said Demo mode because no model key was set."
+ },
+ {
+  "v": "v8",
+  "change": "Real conversion tracking: anonymous funnel events (landing_view, audit_peak, cta_click, capture_view, sample_run, own_analyse, plan_created, guide_verify, guide_confirm, guide_done, dashboard_view) go to D1 `handshakeos-events` through `/api/track` (allow-listed names, random per-tab id, no IP or personal data, 300-byte meta cap). Schema in `migrations/0001_events.sql`. From v8 on, builds ship from a clean checkout of the tag, never the shared worktree. Judge: valid event 204, unknown name / bad id / non-JSON 400; live rows counted after a scripted visit.",
+  "why": "Every version so far was judged by scripted runs. Now each one can be judged on what real visitors do."
+ },
+ {
+  "v": "v9",
+  "change": "Live audit overlay on Capture: the moment a sample or own notes are sent, a full-screen panel shows the visitor's own conversation (and the card photo) with a reading sweep, the real model id and a real elapsed clock. When Gemma answers, the quotes it cited light up inside their text (\"6 claims found, every one quoted from your words\") before the plan opens. Old below-the-fold step list removed. Judge (live Gemma, local): overlay visible 158 ms after click, 6 real citations marked, guide opens; overlay covers the full viewport at 1366x768 and 390x844.",
+  "why": "With real Gemma the analysis takes 9 to 15 s, and the only progress UI rendered below the fold: a tile click looked like nothing happened."
+ },
+ {
+  "v": "v10",
+  "change": "Live proof counters on the landing (hero and close): deals audited by Gemma 4, steps verified, rumours refused, read from the D1 event log through an aggregate-only `/api/stats` (60 s cache). Hidden when D1 is empty or unreachable, so the page never shows an invented number. Backlog v10 to v33 written into the plan doc.",
+  "why": "The landing asked for trust with words only; it now shows what has actually happened on the site."
+ },
+ {
+  "v": "v11",
+  "change": "Own-notes box in the landing close: paste a real conversation and \"Audit my notes\" sends it straight into the live audit. Text travels through sessionStorage (never the URL, cleared on read), enabled from 20 characters. Judge (live Gemma, local): typed notes became \"Bayu Solar Invoicing Pilot\", text absent from URL, handoff cleared; close stage fits at 390x844.",
+  "why": "With live Gemma, visitors who arrive with their own conversation had to leave, find the box and paste again."
+ },
+ {
+  "v": "v12",
+  "change": "Social share card: a 1200x630 card rendered from real HTML (KL plate, headline, a COMPLETED quote next to a struck-through HEARSAY one) via Playwright, so the type is crisp, not generated. Open Graph and Twitter `summary_large_image` metadata on both root layouts with `metadataBase`. Judge: og:image resolves to an absolute URL and returns 200 on the live site.",
+  "why": "Every link to the site (submission, showcase posts, WhatsApp) previewed as bare text."
+ },
+ {
+  "v": "v13",
+  "change": "\"Chase this week\" on Outcomes: for each of your own deals, promises not yet delivered (committed evidence beyond the current stage) and open actions overdue or due within 7 days, soonest first. Items the other side owes get a one-click nudge (copy or WhatsApp) addressed to the contact by first name; your own items are marked \"Your move\". Illustrative seed deals never appear. Judge (live Gemma, local): empty state on a fresh browser; after the English sample, Sarah's requirements (Sat 7 Nov) show \"They owe this\" with a WhatsApp nudge, the scope task (Thu 5 Nov) shows \"Your move\".",
+  "why": "Outcome conversion leaks where promises go unchased; the dashboard counted deals but never said who owes what this week."
+ },
+ {
+  "v": "v14",
+  "change": "Bahasa Melayu landing at `/ms` (own static page with hreflang alternates and ms_MY Open Graph), EN/BM toggle in the bar on both. All landing copy moved to `app/(marketing)/copy.ts`; the audited source messages stay in their original language because they are the evidence. `landing_view` now records the language. Judge: toggle navigates EN to BM, `document.lang` is `ms`, the audit peak reads in BM, no overflow at 390.",
+  "why": "Startup ASEAN in Malaysia, a product that claims \"any ASEAN language\", and a landing that only spoke English."
+ },
+ {
+  "v": "v15",
+  "change": "WhatsApp chat import on Capture: \"Import WhatsApp chat (.txt)\" button plus drag-and-drop onto the conversation box. `lib/whatsapp.ts` parses Android and iOS exports, joins multi-line messages, drops system lines, media placeholders and deleted messages, and keeps the most recent messages within 18k chars; non-chat files fall back to plain text. Judge: Node check on Android and iOS fixtures (noise dropped, multi-line kept, non-chat returns null, truncation keeps the newest); live Gemma turned an exported chat into \"Bayu Solar Invoicing Pilot\" with Arif Rahman as contact.",
+  "why": "ASEAN deals live in WhatsApp threads; getting one in meant hand-copying message by message."
+ },
+ {
+  "v": "v16",
+  "change": "Phone hero art direction: a portrait cut of the Grok dolly (`hero-dolly-portrait.mp4`, 540x960, cropped at x=150 so the card and phone stay in frame for the whole push-in), copy moved over the sky with a top scrim, landscape poster positioned to match. The three.js card field is off below 860px (not even initialised). Old `hero-dolly-m.mp4` and dead `.chip--b` / mobile `.hero__net` rules removed. Judge: at 390x844 the card and phone sit fully below the copy at top and mid-scroll, WebGL not initialised on phone, still initialised on desktop, no overflow.",
+  "why": "On phones the hero showed blurry skyline while the story's anchor (last night's card) hid under the copy."
+ },
+ {
+  "v": "v17",
+  "change": "One visual identity: the app pages (Capture, Opportunity, Outcomes) take the landing's dark palette through the theme tokens, plus a new `accent-ink` token for text on teal, `color-scheme: dark` for native controls, and a raised teal surface for the Prove-it guide. Judge: screenshots of /capture, /dashboard and a guided opportunity at 1366x900, no hard-coded light colours left in app components.",
+  "why": "Clicking from the cinematic dark landing into a beige spreadsheet made it look like two products."
+ },
+ {
+  "v": "v18",
+  "change": "Hedged model calls: Gemma 4 via OpenRouter stays primary; if it has not answered in 15 s (or fails sooner) Gemini starts in parallel and the first good answer wins, the other call is aborted. Per-call timeout 60 s to 45 s. Race logic in `lib/hedge.ts`. Judge: six-case Node check (fast primary, slow primary/backup wins, early failure, slow primary still wins, both fail, no backup); three live analyses still served by OpenRouter Gemma 4 in 5.1 to 8.1 s.",
+  "why": "A slow OpenRouter call made one analysis take 63.5 s, because Gemini only started after the 60 s timeout."
+ },
+ {
+  "v": "v19",
+  "change": "Public changelog at `/versions` (and a Versions tab): every release rendered from `docs/versions.md` at build time, newest first, with what changed, why, and the recorded check split out as \"Verified\". The headline counts only what the log supports. Tabs tightened so the three-tab nav fits a 390px phone. Judge: page prerendered static, counts match the log (19 releases, 15 with a recorded check at build), no overflow at 390 on /versions, /capture, /dashboard.",
+  "why": "Judges evaluate a hackathon build; the iteration and its evidence were invisible to them."
+ },
+ {
+  "v": "v20",
+  "change": "\"Your turn\" hand-off at the bottom of the landing (EN and BM): a numbered tutorial that walks one deal from promise to proof (open the sample, read the plan, verify Sarah's reply, reject the rumour), next to a QR card that opens the guided sample deal on the visitor's own phone. On phones the code is hidden and step 1 becomes \"Tap Start the sample deal\". QR is a static SVG (`public/landing/try.svg`), no new dependency. Judge: QR decoded from the rendered page on `/` and `/ms` equals `https://handshakeos.m-naim.workers.dev/capture?sample=en&run=1` (200 live); 390px phone run reached `/opportunity/...?guide=1` in 12.1 s; no overflow at 390; typecheck green.",
+  "why": "Someone watching the page or the demo had no zero-typing way to try the product in their own hands."
+ },
+ {
+  "v": "v21",
+  "change": "Cost protection for the paid model keys: Cloudflare Workers Rate Limiting caps model calls at 10 per minute per visitor IP across `/api/analyze` and `/api/verify` (`lib/ratelimit.ts`, binding `MODEL_LIMIT`). Over the cap, built-in samples still answer from their recording (marked fallback) so a demo never dies; anything else gets a clear 429. `/api/verify` gains the 20k-character cap analyze already had. Fails open if the limiter is unavailable. Judge: 12 rapid live calls from one IP on production, the excess refused with 429, a built-in sample still answered while limited.",
+  "why": "The public site spends a paid OpenRouter and Gemini key on every request with no limit; one script could drain the credit."
+ }
+]

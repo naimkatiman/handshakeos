@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import releases from "./versions.json";
+import { Visual } from "@/components/Visual";
 
 // Generated from docs/versions.md by scripts/versions.mjs before every build, so the page never drifts from the real log.
 
@@ -38,13 +39,16 @@ export default function Versions() {
   };
   return (
     <div className="space-y-8 pt-4">
-      <div className="max-w-2xl">
-        <p className="text-sm font-medium text-accent">Built in public, one release at a time</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{all.length} releases, each one live.</h1>
-        <p className="mt-3 text-muted">
-          Each version shipped one change to the live site and the reason it mattered. {all.filter((r) => r.change.includes("Judge")).length} of them record
-          the check that proved it worked. Newest first.
-        </p>
+      <div className="visual-heading">
+        <Visual name="launch" size={100} />
+        <div className="max-w-2xl">
+          <p className="text-sm font-medium text-accent">Built in public, one release at a time</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{all.length} releases, each one live.</h1>
+          <p className="mt-3 text-muted">
+            Each version shipped one change to the live site and the reason it mattered. {all.filter((r) => r.change.includes("Judge")).length} of them record
+            the check that proved it worked. Newest first.
+          </p>
+        </div>
       </div>
       <ol className="relative space-y-4 border-l border-line pl-6">
         {all.map((r) => {

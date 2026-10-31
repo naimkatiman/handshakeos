@@ -26,7 +26,7 @@ export default function Nav() {
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-paper/90 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4 sm:gap-3 sm:px-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
+        <Link href="/" aria-label="HandshakeOS home" className="flex items-center gap-2 font-semibold tracking-tight">
           <BrandMark size={36} />
           <span className="hidden sm:inline">HandshakeOS</span>
         </Link>

@@ -297,10 +297,10 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
           <div className="pocket__wrap">
             <div data-sc-in>
               <h2 className="pocket__head">{t.pocket.head}</h2>
-              <ol className="steps" data-sc-in data-sc-stagger="90">
+              <ol className="steps steps--visual" data-sc-in data-sc-stagger="90">
                 {t.pocket.steps.map((s, i) => (
                   <li key={s.title}>
-                    <span className="steps__n">{i + 1}</span>
+                    <span className="steps__n steps__n--visual" aria-hidden="true"><Visual name={(["capture", "conversation", "evidence", "outcomes"] as const)[i]} size={52} /><span className="steps__count">{i + 1}</span></span>
                     <div className={i === 0 ? "steps__scan" : undefined}>
                       <p className="steps__title">{s.title}</p>
                       <p className="steps__text">{s.text}</p>

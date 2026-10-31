@@ -74,6 +74,22 @@ export default function CapturePage() {
   // Deep link from the landing page: /capture?sample=en|ms|card&run=1 preloads a sample and, with run=1, analyses it.
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
+    // Own notes handed over from the landing page through sessionStorage, never the URL.
+    if (q.get("draft") === "1") {
+      let notes = "";
+      try {
+        notes = sessionStorage.getItem("hs:draft") ?? "";
+        sessionStorage.removeItem("hs:draft");
+      } catch {}
+      if (notes) {
+        setText(notes);
+        if (q.get("run") === "1") {
+          track("own_analyse", { from: "landing" });
+          analyse(notes, null);
+        }
+      }
+      return;
+    }
     const sample = q.get("sample");
     if (sample === "card") return void loadCard();
     const notes = sample === "ms" ? SAMPLE_NOTES_MS : sample === "en" ? SAMPLE_NOTES_EN : "";

@@ -64,6 +64,7 @@ export default function Landing() {
   const api = useRef<ScrollCraftApi | null>(null);
   const audit = useRef<HTMLElement>(null);
   const [p, setP] = useState(0);
+  const [draft, setDraft] = useState("");
 
   useEffect(() => () => api.current?.destroy(), []);
   useEffect(() => track("landing_view"), []);
@@ -276,8 +277,35 @@ export default function Landing() {
                 <a className="btn btn--accent btn--lg" href={CTA_HREF} onClick={() => track("cta_click", { where: "close" })} data-sc-magnet="0.26" data-sc-cue="0.04" data-sc-rise="0">
                   {CTA}
                 </a>
-                <a className="close__alt" href="/capture">Paste your own notes</a>
               </div>
+              <form
+                className="own"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (draft.trim().length < 20) return;
+                  try {
+                    sessionStorage.setItem("hs:draft", draft.trim());
+                  } catch {
+                    return void (location.href = "/capture");
+                  }
+                  track("cta_click", { where: "own" });
+                  location.href = "/capture?draft=1&run=1";
+                }}
+              >
+                <label htmlFor="own-notes" className="own__label">Or audit your own notes. Any ASEAN language.</label>
+                <textarea
+                  id="own-notes"
+                  className="own__box"
+                  rows={3}
+                  maxLength={20000}
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder="Paste last night's WhatsApp thread, an email, or your meeting notes"
+                />
+                <button type="submit" className="btn btn--ghost own__go" disabled={draft.trim().length < 20}>
+                  Audit my notes
+                </button>
+              </form>
               {proof}
             </div>
             <footer className="foot">

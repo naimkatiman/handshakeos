@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { gemmaJSON, modelName, hasKey, type ImageInput } from "@/lib/gemma";
 import { analyzePrompt } from "@/lib/prompts";
 import { cannedAnalysis } from "@/lib/samples";
+import { modelCallAllowed, RATE_LIMITED } from "@/lib/ratelimit";
 import { normalizeAnalysis } from "@/lib/normalize";
 import type { Analysis, EngineInfo } from "@/lib/types";
 
@@ -29,6 +30,12 @@ export async function POST(req: Request) {
       { error: "Demo mode: only the built-in samples work without a key. Add OPENROUTER_API_KEY." },
       { status: 400 },
     );
+  }
+
+  if (!(await modelCallAllowed(req))) {
+    // Over the per-visitor cap: built-in samples still answer from their recording, anything else waits.
+    if (canned) return NextResponse.json({ analysis: normalizeAnalysis(canned, text), engine: engine("fallback") });
+    return NextResponse.json({ error: RATE_LIMITED }, { status: 429 });
   }
 
   const t0 = Date.now();

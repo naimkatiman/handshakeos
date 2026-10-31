@@ -8,6 +8,7 @@ import { fileToImageInput } from "@/lib/image";
 import { SAMPLE_CARD_NOTE, SAMPLE_NOTES_EN, SAMPLE_NOTES_MS } from "@/lib/samples";
 import { store, uid, useOpportunities } from "@/lib/store";
 import { track } from "@/lib/track";
+import { parseWhatsApp } from "@/lib/whatsapp";
 import { STAGE_LABEL, type Analysis, type EngineInfo, type Opportunity } from "@/lib/types";
 
 type Img = { data: string; mimeType: string; preview: string } | null;
@@ -26,6 +27,26 @@ export default function CapturePage() {
   const [model, setModel] = useState("Gemma 4");
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+  const chatRef = useRef<HTMLInputElement>(null);
+  const [imported, setImported] = useState("");
+
+  // A WhatsApp "Export chat" .txt becomes clean conversation text; anything else is pasted as-is.
+  async function importChat(f?: File | null) {
+    if (!f) return;
+    setError("");
+    if (f.size > 5_000_000) return setError("That file is over 5 MB. Export the chat without media and try again.");
+    const raw = await f.text();
+    const chat = parseWhatsApp(raw);
+    if (!chat) {
+      setText(raw.slice(0, 20_000));
+      setImported(`Imported ${f.name} as plain text.`);
+      return;
+    }
+    setText(chat.text);
+    setImported(
+      `Imported ${chat.messages} WhatsApp messages from ${chat.people.join(", ")}${chat.truncated ? " (the most recent ones that fit)" : ""}.`,
+    );
+  }
   // null until /api/status answers. Without a key only the built-in samples can be analysed.
   const [live, setLive] = useState<boolean | null>(null);
   useEffect(() => {
@@ -185,6 +206,14 @@ export default function CapturePage() {
               id="notes"
               value={text}
               onChange={(e) => setText(e.target.value)}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                const f = e.dataTransfer.files[0];
+                if (!f) return;
+                e.preventDefault();
+                if (f.type.startsWith("image/")) pickFile(f);
+                else importChat(f);
+              }}
               onPaste={(e) => {
                 const f = Array.from(e.clipboardData.files).find((x) => x.type.startsWith("image/"));
                 if (f) {
@@ -230,6 +259,11 @@ export default function CapturePage() {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
+          <button type="button" className={btn.ghost} onClick={() => chatRef.current?.click()}>
+            Import WhatsApp chat (.txt)
+          </button>
+          <input ref={chatRef} type="file" accept=".txt,text/plain" hidden onChange={(e) => importChat(e.target.files?.[0])} />
+          {imported && <span className="text-xs text-muted">{imported}</span>}
           <button className={`${btn.accent} ml-auto`} disabled={busy || (!text.trim() && !image)} onClick={() => {
             track("own_analyse");
             analyse();

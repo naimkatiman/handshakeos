@@ -439,7 +439,7 @@ function ProveIt({ opp, onClose }: { opp: Opportunity; onClose: () => void }) {
   const primary = "inline-flex items-center justify-center gap-2 rounded-lg bg-[#4fd1ae] px-4 py-2.5 text-sm font-semibold text-[#06231c] transition hover:brightness-110 disabled:opacity-50";
 
   return (
-    <section aria-live="polite" className="relative overflow-hidden rounded-xl bg-[#0b0f14] p-5 text-[#f2efe8] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.6)] sm:p-6">
+    <section aria-live="polite" className="relative overflow-hidden rounded-xl border border-[#4fd1ae]/25 bg-[#0f1d22] p-5 text-[#f2efe8] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.6)] sm:p-6">
       <div className="flex items-center justify-between gap-3">
         <ol className="flex gap-1.5" aria-label={`Step ${Math.min(step, 4)} of 4`}>
           {[1, 2, 3, 4].map((n) => (

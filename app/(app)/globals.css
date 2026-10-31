@@ -3,20 +3,22 @@
 @theme {
   --font-sans: "Inter Tight", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --color-paper: #f5f3ee;
-  --color-card: #ffffff;
-  --color-ink: #15171b;
-  --color-muted: #6b6f76;
-  --color-line: #e3e0d8;
-  --color-accent: #0f6e5c;
-  --color-accent-soft: #e2f1ec;
-  --color-amber: #a8640a;
-  --color-amber-soft: #fbf0dc;
-  --color-danger: #b42318;
-  --color-danger-soft: #fdecea;
+  /* Same palette as the landing, so the product reads as one thing from first scroll to last click. */
+  --color-paper: #0b0f14;
+  --color-card: #131a23;
+  --color-ink: #f2efe8;
+  --color-muted: #a3acb6;
+  --color-line: #243040;
+  --color-accent: #4fd1ae;
+  --color-accent-ink: #06231c;
+  --color-accent-soft: #12302a;
+  --color-amber: #f0b14a;
+  --color-amber-soft: #2e2412;
+  --color-danger: #ff7a6b;
+  --color-danger-soft: #331a17;
 }
 
-html { background: var(--color-paper); color: var(--color-ink); }
+html { background: var(--color-paper); color: var(--color-ink); color-scheme: dark; }
 body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 ::selection { background: var(--color-accent-soft); }

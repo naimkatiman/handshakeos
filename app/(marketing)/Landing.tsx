@@ -1,7 +1,7 @@
 "use client";
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
-import HeroNetwork from "./HeroNetwork";
+import HeroAnimation from "./HeroAnimation";
 import { BrandMark, Visual } from "@/components/Visual";
 import { track } from "@/lib/track";
 import { COPY, type Lang } from "./copy";
@@ -133,17 +133,12 @@ export default function Landing({ lang = "en" }: { lang?: Lang }) {
       </header>
 
       <main id="top">
-        {/* 1 · Recognition: the scroll pushes the camera in toward last night's card while the noise falls away. */}
-        <section data-sc-act="scrub" data-sc-span="1.6" data-sc-dwell="0.3" data-sc-drift="#0b0f14" className="hero">
+        {/* 1 · Recognition: source messages connect to a verified deal in the Blender scene. */}
+        <section data-sc-act="flow" data-sc-drift="#0b0f14" className="hero">
           <div data-sc-stage className="hero__stage">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="sc-stage__poster hero__media hero__poster" src="/landing/hero-plate.jpg" alt="" />
-            <video className="hero__media hero__clip" data-sc-scrub data-sc-src="/landing/hero-dolly.mp4" data-sc-src-mobile="/landing/hero-dolly-portrait.mp4" muted playsInline />
-            <div className="hero__scrim" aria-hidden="true" />
-            <HeroNetwork />
             <div className="hero__artifact-halo" aria-hidden="true" />
-            <Visual name="proof" size={360} className="hero__artifact" />
-            <div className="hero__copy" data-sc-cue="0 0.7 0">
+            <HeroAnimation labels={t.motion} />
+            <div className="hero__copy">
               <p className="eyebrow">{t.eyebrow}</p>
               <h1 className="hero__title">{t.title}</h1>
               <p className="hero__lede">{t.lede}</p>

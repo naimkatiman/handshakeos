@@ -3,6 +3,7 @@ export type Lang = "en" | "ms";
 
 export const COPY = {
   en: {
+    motion: { pause: "Pause animation", play: "Play animation" },
     cta: "Run the KitaKantin deal",
     navHow: "How it checks",
     navOutcomes: "Outcomes",
@@ -91,6 +92,7 @@ export const COPY = {
     other: { href: "/ms", label: "BM", name: "Bahasa Melayu" },
   },
   ms: {
+    motion: { pause: "Jeda animasi", play: "Mainkan animasi" },
     cta: "Cuba perjanjian KitaKantin",
     navHow: "Cara ia menyemak",
     navOutcomes: "Hasil",

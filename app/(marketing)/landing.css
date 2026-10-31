@@ -62,13 +62,8 @@ q { quotes: "\201C" "\201D"; }
 .stamp--rejected { color: var(--danger); }
 
 /* ── 1 hero ──────────────────────────────────────────────────────────── */
-.hero__stage { overflow: hidden; }
-.hero__stage .hero__media { object-position: 30% 50%; }
-.hero__scrim {
-  position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: linear-gradient(270deg, rgb(11 15 20 / 0.94) 0%, rgb(11 15 20 / 0.78) 36%, rgb(11 15 20 / 0.1) 62%),
-              linear-gradient(0deg, rgb(11 15 20 / 0.8) 0%, transparent 30%);
-}
+.hero__stage { overflow: hidden; min-height: 100svh; }
+.hero__stage:not(.sc-stage) { position: relative; }
 .hero__copy {
   position: absolute; z-index: 4; right: var(--gutter); top: 50%; translate: 0 -46%;
   width: min(36rem, calc(100% - 2 * var(--gutter)));
@@ -80,18 +75,29 @@ q { quotes: "\201C" "\201D"; }
 }
 .hero__lede { margin: 1.4rem 0 0; max-width: 34rem; font-size: clamp(1rem, 1.3vw, 1.15rem); line-height: 1.55; color: var(--sc-ink-soft); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
-.hero__net { position: absolute; inset: 0 auto 0 0; z-index: 2; width: 60%; height: 100%; -webkit-mask-image: linear-gradient(90deg, #000 70%, transparent); mask-image: linear-gradient(90deg, #000 70%, transparent); pointer-events: none; opacity: 0; transition: opacity 600ms ease; }
-.hero__net[data-ready] { opacity: 1; }
-/* Phones get their own composition: copy over the sky, the table with last night's card left in view below it.
-   The portrait clip is already cropped onto the card; the landscape poster is positioned to match it. */
+.hero__animation { aspect-ratio: 1; }
+.hero__animation-poster, .hero__animation-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.hero__animation-video {
+  opacity: 0;
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent), linear-gradient(0deg, transparent, #000 4%, #000 96%, transparent);
+  mask-composite: intersect;
+}
+.hero__animation[data-ready] .hero__animation-video { opacity: 1; }
+.hero__motion {
+  position: absolute; top: 1rem; left: 50%; translate: -50% 0; z-index: 1;
+  display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.75rem;
+  border: 1px solid var(--sc-hairline-strong); border-radius: 999px;
+  background: var(--sc-canvas); color: var(--sc-ink-soft); font: inherit; font-size: 0.75rem;
+  white-space: nowrap; cursor: pointer; pointer-events: auto;
+}
+.hero__motion:hover { color: var(--sc-ink); border-color: var(--sc-accent); }
+.hero__motion:focus-visible { outline: 2px solid var(--sc-accent); outline-offset: 4px; }
+@media (min-width: 861px) { .hero__copy { width: min(45vw, 36rem); } }
+/* Phones keep the copy above the Blender composition. */
 @media (max-width: 860px) {
-  .hero__scrim { background: linear-gradient(180deg, rgb(11 15 20 / 0.96) 0%, rgb(11 15 20 / 0.82) 50%, rgb(11 15 20 / 0) 68%); }
   .hero__copy { top: 5.6rem; bottom: auto; translate: none; right: auto; left: var(--gutter); }
   .hero__lede { font-size: 0.95rem; margin-top: 1rem; }
   .hero__actions { margin-top: 1.25rem; }
-  .hero__stage .hero__poster { object-position: 24% 50%; }
-  .hero__stage .hero__clip { object-position: 50% 50%; }
-  .hero__net { display: none; }
 }
 
 /* live proof counters (real numbers from D1) */

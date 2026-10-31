@@ -30,10 +30,9 @@ button:hover .visual-sample { transform: translateY(-3px) rotate(-3deg); }
 .steps__n--visual { position: relative; width: 3.25rem; height: 3.25rem; border: 0; }
 .steps__count { position: absolute; right: 0; bottom: 0; display: grid; place-items: center; width: 1rem; height: 1rem; border-radius: 50%; background: #182d2a; color: #9debcf; font-size: 0.62rem; }
 @media (max-width: 860px) {
-  .hero__stage { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+  .hero__stage { display: grid; grid-template-rows: auto auto; align-content: start; height: auto; }
   .hero__stage .hero__copy { position: relative; grid-row: 1; top: auto; left: auto; right: auto; translate: none; padding: 6rem var(--gutter) 0; width: 100%; box-sizing: border-box; }
-  .hero__artifact { position: relative; grid-row: 2; justify-self: center; align-self: center; top: auto; bottom: auto; left: auto; translate: none; width: min(65vw, 21rem) !important; height: 100%; min-height: 0; max-height: 33vh; }
-  .hero__chips { display: none; }
+  .hero__artifact { position: relative; grid-row: 2; justify-self: center; align-self: center; top: auto; bottom: auto; left: auto; translate: none; width: min(80vw, 24rem) !important; height: auto; margin: 1rem 0 2rem; }
   .hero__artifact-halo { left: 8%; top: auto; bottom: 0; width: 84%; height: 40%; }
   .ledger > .visual { display: none; }
   .rules__art { width: 10rem; height: 10rem; margin-bottom: 0.75rem; }
@@ -51,9 +50,6 @@ button:hover .visual-sample { transform: translateY(-3px) rotate(-3deg); }
   .audit__head { gap: 0.5rem; }
   .audit__head .visual { width: 3rem; height: 3rem; }
   .close__brand { width: 4rem; height: 4rem; margin-bottom: 0.75rem; }
-}
-@media (max-height: 740px) and (max-width: 860px) {
-  .hero__artifact { max-height: 24vh; }
 }
 @media (max-width: 360px) {
   .hero__stage .hero__copy { padding-top: 7.75rem; }

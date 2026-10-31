@@ -36,3 +36,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   transition: top 120ms ease;
 }
 .skip-link:focus { top: 0.75rem; }
+
+.print-only { display: none; }
+
+/* Print: a one-deal brief on white paper. Controls, navigation and the guide are dropped; every quote is kept. */
+@media print {
+  :root {
+    --color-paper: #ffffff; --color-card: #ffffff; --color-ink: #111111; --color-muted: #555555; --color-line: #cccccc;
+    --color-accent: #0f6e5c; --color-accent-soft: #e2f1ec; --color-amber: #8a5208; --color-amber-soft: #fbf0dc;
+    --color-danger: #b42318; --color-danger-soft: #fdecea;
+  }
+  html { color-scheme: light; }
+  header, nav, .skip-link, .no-print, button, form, textarea, input { display: none !important; }
+  main { max-width: none !important; padding: 0 !important; }
+  main::before { content: "HandshakeOS deal brief"; display: block; font: 600 11px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: #0f6e5c; margin-bottom: 8px; }
+  section, li { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  .print-only { display: block !important; }
+}

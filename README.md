@@ -31,18 +31,18 @@ Most "AI CRMs" let you mark a deal as won. HandshakeOS doesn't trust anyone, inc
 
 ```bash
 npm install
-cp .env.example .env.local   # add your GEMINI_API_KEY
+cp .env.example .env.local   # add your OPENROUTER_API_KEY
 npm run dev                  # http://localhost:3000
 ```
 
-Get a key at <https://aistudio.google.com/apikey>. Models: `gemma-4-26b-a4b-it` (default, fast MoE) or `gemma-4-31b-it` (stronger reasoning). Set `GEMMA_MODEL` to switch.
+Get a key at <https://openrouter.ai/keys>. Default model: `google/gemma-4-26b-a4b-it` (open weights, fast MoE, vision). `google/gemma-4-31b-it` is the stronger alternative. Set `GEMMA_MODEL` to switch. Use the paid id. The `:free` pool returns 429 when several people click at once.
 
 **No key?** The app runs in *Demo mode*: the built-in samples return pre-recorded outputs so you can walk the whole flow. With a key, if the live call fails mid-demo on a sample, the app serves the sample result and labels it "Offline fallback" so your demo never dies on stage.
 
 ### Deploy to Vercel
 
 1. Push to GitHub, import the repo in Vercel.
-2. Add `GEMINI_API_KEY` (and optionally `GEMMA_MODEL`) as environment variables.
+2. Add `OPENROUTER_API_KEY` (and optionally `GEMMA_MODEL`) as environment variables.
 3. Deploy. No database to provision.
 
 ## Architecture
@@ -55,7 +55,7 @@ app/
   api/analyze/route.ts     Gemma 4: conversation → structured opportunity
   api/verify/route.ts      Gemma 4: evidence → milestone findings
 lib/
-  gemma.ts                 Gemini API client, robust JSON parsing, grounding check
+  gemma.ts                 OpenRouter client for Gemma 4, robust JSON parsing, grounding check
   prompts.ts               Extraction + evidence-audit prompts
   normalize.ts             Validates model output, enforces evidence rules
   store.ts                 Browser-local persistence (swap for Supabase)

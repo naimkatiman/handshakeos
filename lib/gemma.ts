@@ -1,9 +1,10 @@
 import "server-only";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-const API = "https://generativelanguage.googleapis.com/v1beta/models";
+const API = "https://openrouter.ai/api/v1/chat/completions";
 
-export const GEMMA_MODEL = process.env.GEMMA_MODEL || "gemma-4-26b-a4b-it";
-export const hasKey = () => Boolean(process.env.GEMINI_API_KEY);
+/** Paid OpenRouter id. The :free pool answers 429 under load, which would kill a live judging session. */
+export const DEFAULT_GEMMA_MODEL = "google/gemma-4-26b-a4b-it";
 
 export interface ImageInput {
   data: string; // base64, no data: prefix
@@ -11,47 +12,84 @@ export interface ImageInput {
 }
 
 /**
- * Calls Gemma 4 on the Gemini API and returns parsed JSON.
- * Instructions go in the user turn (works across Gemma variants), and the
- * response is parsed defensively — Gemma sometimes wraps JSON in fences.
+ * Worker secrets are not on process.env at build time. Read them per request,
+ * and fall back to .env.local when this runs under `next dev`.
+ */
+function readEnv(name: string): string | undefined {
+  const fromProcess = process.env[name];
+  if (fromProcess) return fromProcess;
+  try {
+    const value = (getCloudflareContext().env as Record<string, unknown>)[name];
+    return typeof value === "string" && value ? value : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export const hasKey = () => Boolean(readEnv("OPENROUTER_API_KEY"));
+
+export function modelName(): string {
+  return readEnv("GEMMA_MODEL") || DEFAULT_GEMMA_MODEL;
+}
+
+function messageText(message: { content?: unknown } | undefined): string {
+  const content = message?.content;
+  if (typeof content === "string") return content;
+  if (Array.isArray(content)) {
+    return content
+      .map((part) => (part && typeof part === "object" && "text" in part && typeof part.text === "string" ? part.text : ""))
+      .join("");
+  }
+  return "";
+}
+
+/**
+ * Calls open-weight Gemma 4 through OpenRouter and returns parsed JSON.
+ * Reasoning is off so the token budget is the JSON, not a thought trace.
+ * Instructions stay in the user turn, and the response is parsed defensively
+ * because Gemma sometimes wraps JSON in fences.
  */
 export async function gemmaJSON<T>(prompt: string, image?: ImageInput): Promise<T> {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) throw new Error("GEMINI_API_KEY is not set");
+  const key = readEnv("OPENROUTER_API_KEY");
+  if (!key) throw new Error("OPENROUTER_API_KEY is not set");
 
-  const parts: Record<string, unknown>[] = [];
-  if (image) parts.push({ inlineData: { mimeType: image.mimeType, data: image.data } });
-  parts.push({ text: prompt });
+  const textPart = { type: "text", text: prompt };
+  const content = image
+    ? [{ type: "image_url", image_url: { url: `data:${image.mimeType};base64,${image.data}` } }, textPart]
+    : prompt;
 
-  const body = {
-    contents: [{ role: "user", parts }],
-    generationConfig: { temperature: 0.2, maxOutputTokens: 4096 },
-  };
-
-  const res = await fetch(`${API}/${GEMMA_MODEL}:generateContent`, {
+  const res = await fetch(API, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${key}`,
+      "HTTP-Referer": "https://handshakeos.m-naim.workers.dev",
+      "X-Title": "HandshakeOS",
+    },
+    body: JSON.stringify({
+      model: modelName(),
+      temperature: 0.2,
+      max_tokens: 4096,
+      reasoning: { enabled: false },
+      messages: [{ role: "user", content }],
+    }),
     signal: AbortSignal.timeout(60_000),
   });
 
   if (!res.ok) {
     const err = await res.text();
-    let msg = err.slice(0, 200);
+    let msg = err.slice(0, 240);
     try {
-      msg = JSON.parse(err)?.error?.message ?? msg;
-    } catch {}
-    throw new Error(`Gemini API ${res.status}: ${msg}`);
+      const parsed = JSON.parse(err) as { error?: { message?: string } | string };
+      msg = (typeof parsed.error === "string" ? parsed.error : parsed.error?.message) ?? msg;
+    } catch {
+      /* keep the raw slice */
+    }
+    throw new Error(`OpenRouter ${res.status}: ${msg.replace(/sk-or-v1-[a-z0-9]+/gi, "sk-or-[redacted]")}`);
   }
 
-  const json = await res.json();
-  // Skip "thought" parts if thinking is on; join the answer parts.
-  const text: string = (json?.candidates?.[0]?.content?.parts ?? [])
-    .filter((p: { thought?: boolean; text?: string }) => !p.thought && p.text)
-    .map((p: { text: string }) => p.text)
-    .join("");
-
-  return parseJSON<T>(text);
+  const json = (await res.json()) as { choices?: { message?: { content?: unknown } }[] };
+  return parseJSON<T>(messageText(json?.choices?.[0]?.message));
 }
 
 export function parseJSON<T>(raw: string): T {

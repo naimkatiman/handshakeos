@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { gemmaJSON, GEMMA_MODEL, hasKey, type ImageInput } from "@/lib/gemma";
+import { gemmaJSON, modelName, hasKey, type ImageInput } from "@/lib/gemma";
 import { verifyPrompt } from "@/lib/prompts";
 import { cannedVerify } from "@/lib/samples";
 import { normalizeFindings } from "@/lib/normalize";
@@ -23,13 +23,13 @@ export async function POST(req: Request) {
       findings: normalizeFindings(r.findings, text + "\n" + (r.transcript ?? "")),
       summary: typeof r.summary === "string" ? r.summary : "",
       confidence: Math.max(0, Math.min(1, Number(r.confidence) || 0)),
-      engine: { mode, model: GEMMA_MODEL, ms },
+      engine: { mode, model: modelName(), ms },
     });
 
   if (!hasKey()) {
     if (canned) return pack(canned, "demo");
     return NextResponse.json(
-      { error: "Demo mode: only the built-in sample evidence works without a key. Add GEMINI_API_KEY." },
+      { error: "Demo mode: only the built-in sample evidence works without a key. Add OPENROUTER_API_KEY." },
       { status: 400 },
     );
   }

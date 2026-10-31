@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { gemmaJSON, GEMMA_MODEL, hasKey, type ImageInput } from "@/lib/gemma";
+import { gemmaJSON, modelName, hasKey, type ImageInput } from "@/lib/gemma";
 import { analyzePrompt } from "@/lib/prompts";
 import { cannedAnalysis } from "@/lib/samples";
 import { normalizeAnalysis } from "@/lib/normalize";
@@ -17,9 +17,9 @@ export async function POST(req: Request) {
   const canned = cannedAnalysis(text, now, !!image);
 
   if (!hasKey()) {
-    if (canned) return NextResponse.json({ analysis: normalizeAnalysis(canned, text), engine: { mode: "demo", model: GEMMA_MODEL } });
+    if (canned) return NextResponse.json({ analysis: normalizeAnalysis(canned, text), engine: { mode: "demo", model: modelName() } });
     return NextResponse.json(
-      { error: "Demo mode: only the built-in samples work without a key. Add GEMINI_API_KEY to analyse your own notes." },
+      { error: "Demo mode: only the built-in samples work without a key. Add OPENROUTER_API_KEY to analyse your own notes." },
       { status: 400 },
     );
   }
@@ -29,12 +29,12 @@ export async function POST(req: Request) {
     const raw = await gemmaJSON<Partial<Analysis>>(analyzePrompt(text, now.toISOString().slice(0, 10), !!image), image);
     return NextResponse.json({
       analysis: normalizeAnalysis(raw, text),
-      engine: { mode: "live", model: GEMMA_MODEL, ms: Date.now() - t0 },
+      engine: { mode: "live", model: modelName(), ms: Date.now() - t0 },
     });
   } catch (e) {
     // Stage safety net: if the live call dies mid-demo on a sample, serve the canned result and say so.
     if (canned)
-      return NextResponse.json({ analysis: normalizeAnalysis(canned, text), engine: { mode: "fallback", model: GEMMA_MODEL } });
+      return NextResponse.json({ analysis: normalizeAnalysis(canned, text), engine: { mode: "fallback", model: modelName() } });
     return NextResponse.json({ error: (e as Error).message }, { status: 502 });
   }
 }

@@ -36,13 +36,13 @@ export default function Nav() {
         <div className="ml-auto">
           {status && (
             <span
-              title={status.live ? `Live: ${status.model} via Gemini API` : "No GEMINI_API_KEY set: built-in samples only"}
+              title={status.live ? `Live: ${status.model} via OpenRouter` : "No OPENROUTER_API_KEY set: built-in samples only"}
               className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${
                 status.live ? "border-accent/30 bg-accent-soft text-accent" : "border-amber/30 bg-amber-soft text-amber"
               }`}
             >
               <span className={`h-1.5 w-1.5 rounded-full ${status.live ? "bg-accent" : "bg-amber"}`} />
-              {status.live ? status.model : "Demo mode"}
+              {status.live ? "Gemma 4 live" : "Demo mode"}
             </span>
           )}
         </div>

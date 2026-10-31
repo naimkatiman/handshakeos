@@ -138,8 +138,8 @@ export default function CapturePage() {
         <h2 className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-muted">Or paste your own</h2>
         {live === false && (
           <p className="mb-3 rounded-lg border border-amber/30 bg-amber-soft px-3 py-2 text-sm text-amber">
-            This public demo has no Gemini key, so it can only analyse the three conversations above. Your own notes work when you run
-            HandshakeOS with a free key from Google AI Studio.
+            This demo has no OpenRouter key, so it can only analyse the three conversations above. Your own notes work once
+            HandshakeOS has a key for open-weight Gemma 4.
           </p>
         )}
       <Card>

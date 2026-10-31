@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240"><defs>
+  <linearGradient id="mint" x1="0" y1="0" x2=".85" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#dcfff0"/><stop offset=".42" stop-color="#6ce5c2"/><stop offset="1" stop-color="#249c83"/></linearGradient>
+  <linearGradient id="ivory" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#fffef5"/><stop offset=".55" stop-color="#e5ede6"/><stop offset="1" stop-color="#a6c4bf"/></linearGradient>
+  <linearGradient id="navy" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#41586a"/><stop offset=".45" stop-color="#253b4a"/><stop offset="1" stop-color="#12212f"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0bd"/><stop offset=".5" stop-color="#f4c66e"/><stop offset="1" stop-color="#b2782d"/></linearGradient>
+  <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#268d78"/><stop offset="1" stop-color="#103c3a"/></linearGradient>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b0ffe5" stop-opacity=".36"/><stop offset="1" stop-color="#4fd1ae" stop-opacity=".06"/></linearGradient>
+  <radialGradient id="halo"><stop stop-color="#4fd1ae" stop-opacity=".22"/><stop offset="1" stop-color="#4fd1ae" stop-opacity="0"/></radialGradient>
+  <filter id="shadow" x="-50%" y="-50%" width="200%" height="240%"><feGaussianBlur stdDeviation="8"/></filter>
+</defs><ellipse cx="121" cy="207" rx="71" ry="13" fill="#020b12" opacity=".3" filter="url(#shadow)"/><circle cx="118" cy="112" r="77" fill="#103e38" transform="translate(0 11)"/>
+    <circle cx="118" cy="112" r="77" fill="url(#mint)" stroke="#c4ffe9" stroke-width="1.5"/>
+    <g fill="none" stroke="#176652" stroke-width="3" opacity=".6"><ellipse cx="118" cy="112" rx="37" ry="76"/><ellipse cx="118" cy="112" rx="76" ry="29"/><path d="M42 112H194M118 36V188"/></g>
+    <path d="M63 64C77 48 99 40 117 40" fill="none" stroke="#ecfff4" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+    <ellipse cx="118" cy="112" rx="107" ry="36" transform="rotate(-29 118 112)" fill="none" stroke="#647e8d" stroke-width="7"/>
+    <path d="M25 157C58 178 157 132 207 70" fill="none" stroke="url(#ivory)" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="204" cy="73" r="13" fill="#966d30"/><circle cx="204" cy="69" r="13" fill="url(#gold)"/></svg>

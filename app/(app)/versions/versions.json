@@ -138,5 +138,10 @@
   "v": "v27",
   "change": "Outcomes shows your own funnel: illustrative deals are on only until the visitor has captured a real one, then the funnel, rates and map default to \"Your N deals only\" with the sample set one toggle away; a scope line says exactly what is on screen, and rows are tagged YOURS or ILLUSTRATIVE. Judge: fresh browser shows the illustrative set (Introduced 19) with a CTA; after one real deal, \"Your 1 deal only.\" with Introduced 1 and the toggle off; toggling on gives 20 and \"plus the illustrative set\".",
   "why": "A visitor with two real deals saw \"Introduced: 21\": their own metrics were buried in sample data."
+ },
+ {
+  "v": "v28",
+  "change": "\"Next best move\" on every deal (when the guide is not running): one recommendation with its reason and a button that jumps to the right section, computed by rules from the deal's own data (`lib/nextMove.ts`): evidence awaiting review, then overdue items (chase them, or do yours), then a committed promise needing proof, then \"send the follow-up while it is warm\". No model call, nothing invented. Judge: fresh card deal gives \"Send the follow-up while it is warm\"; with the contact's action overdue it gives \"Chase Dewi: Draft pilot proposal / due Tue, 20 Oct\" and the button lands on the follow-up; with pending evidence it gives \"Review the evidence waiting for you\".",
+  "why": "The opportunity page laid out six cards of facts but never said what to do now, which is the step that converts a conversation into an outcome."
  }
 ]

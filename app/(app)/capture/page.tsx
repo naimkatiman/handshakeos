@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import AuditOverlay from "@/components/AuditOverlay";
 import { Card, LevelBadge, Spinner, btn } from "@/components/ui";
 import { fileToImageInput } from "@/lib/image";
 import { SAMPLE_CARD_NOTE, SAMPLE_NOTES_EN, SAMPLE_NOTES_MS } from "@/lib/samples";
@@ -11,7 +12,6 @@ import { STAGE_LABEL, type Analysis, type EngineInfo, type Opportunity } from "@
 
 type Img = { data: string; mimeType: string; preview: string } | null;
 
-const STEPS = ["Reading the conversation", "Extracting parties, terms and commitments", "Checking every claim against the source", "Drafting next actions and follow-up"];
 
 export default function CapturePage() {
   const router = useRouter();
@@ -20,13 +20,22 @@ export default function CapturePage() {
   const [text, setText] = useState("");
   const [image, setImage] = useState<Img>(null);
   const [busy, setBusy] = useState(false);
-  const [step, setStep] = useState(0);
+  // The running analysis shown full screen, and the quotes the model cited once it answers.
+  const [job, setJob] = useState<{ text: string; preview?: string; startedAt: number } | null>(null);
+  const [found, setFound] = useState<string[] | null>(null);
+  const [model, setModel] = useState("Gemma 4");
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   // null until /api/status answers. Without a key only the built-in samples can be analysed.
   const [live, setLive] = useState<boolean | null>(null);
   useEffect(() => {
-    fetch("/api/status").then((r) => r.json()).then((s: { live: boolean }) => setLive(s.live)).catch(() => setLive(null));
+    fetch("/api/status")
+      .then((r) => r.json())
+      .then((s: { live: boolean; model?: string }) => {
+        setLive(s.live);
+        if (s.model) setModel(s.model);
+      })
+      .catch(() => setLive(null));
   }, []);
 
   // One click from a sample to a finished plan. Only the English deal has the guided Prove-it follow-up.
@@ -77,8 +86,8 @@ export default function CapturePage() {
   async function analyse(input = text, img: Img = image, guided = false) {
     setBusy(true);
     setError("");
-    setStep(0);
-    const timer = setInterval(() => setStep((s) => Math.min(s + 1, STEPS.length - 1)), 1400);
+    setFound(null);
+    setJob({ text: input, preview: img?.preview, startedAt: Date.now() });
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -104,17 +113,20 @@ export default function CapturePage() {
       };
       store.add(opp);
       track("plan_created", { mode: opp.engine.mode, guided });
+      // Let the visitor see their own words being cited before the plan opens.
+      setFound([...a.evidence, ...a.commitments].map((c) => c.quote).filter(Boolean));
+      await new Promise((r) => setTimeout(r, matchMedia("(prefers-reduced-motion: reduce)").matches ? 700 : 1600));
       router.push(`/opportunity/${opp.id}${guided ? "?guide=1" : ""}`);
     } catch (e) {
       setError((e as Error).message);
       setBusy(false);
-    } finally {
-      clearInterval(timer);
+      setJob(null);
     }
   }
 
   return (
     <div className="space-y-8">
+      {job && <AuditOverlay text={job.text} preview={job.preview} model={model} startedAt={job.startedAt} found={found} />}
       <div className="max-w-2xl pt-4">
         <p className="text-sm font-medium text-accent">Startup ASEAN · Outcome Conversion</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Run a real conversation.</h1>
@@ -211,15 +223,6 @@ export default function CapturePage() {
           </button>
         </div>
 
-        {busy && (
-          <ol className="mt-4 space-y-1 text-sm">
-            {STEPS.map((s, i) => (
-              <li key={s} className={i <= step ? "text-ink" : "text-muted/50"}>
-                {i < step ? "✓" : i === step ? "→" : "·"} {s}
-              </li>
-            ))}
-          </ol>
-        )}
         {error && <p className="mt-4 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">{error}</p>}
       </Card>
       </div>

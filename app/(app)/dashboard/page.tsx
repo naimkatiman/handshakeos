@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import CorridorMap, { HUBS, parseCorridor, type Corridor } from "@/components/CorridorMap";
 import { Card, btn } from "@/components/ui";
 import { funnel, stageIndex } from "@/lib/funnel";
 import { store, useOpportunities } from "@/lib/store";
@@ -26,6 +27,8 @@ export default function Dashboard() {
   const all = useOpportunities();
   const [mounted, setMounted] = useState(false);
   const [includeSeed, setIncludeSeed] = useState(true);
+  // A country ("Malaysia") or an exact corridor ("Malaysia → Singapore"); matches by substring of the corridor.
+  const [filter, setFilter] = useState<string | null>(null);
   useEffect(() => setMounted(true), []);
 
   const opps = useMemo(() => (includeSeed ? all : all.filter((o) => !o.illustrative)), [all, includeSeed]);
@@ -45,6 +48,21 @@ export default function Dashboard() {
     }
     return [...m.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 8);
   }, [opps]);
+
+  const mapCorridors = useMemo(() => {
+    const m = new Map<string, Corridor>();
+    for (const o of opps) {
+      const pair = parseCorridor(o.analysis.corridor);
+      if (!pair) continue;
+      const k = pair.join("|");
+      const c = m.get(k) ?? { from: pair[0], to: pair[1], n: 0, maxStage: 0, moved: 0 };
+      const i = stageIndex(o.stage);
+      m.set(k, { ...c, n: c.n + 1, maxStage: Math.max(c.maxStage, i), moved: c.moved + (i >= 1 ? 1 : 0) });
+    }
+    return [...m.values()];
+  }, [opps]);
+
+  const shown = filter ? opps.filter((o) => (o.analysis.corridor ?? "").includes(filter)) : opps;
 
   if (!mounted) return null;
 
@@ -92,10 +110,20 @@ export default function Dashboard() {
         </div>
       </Card>
 
-      <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-        <Card title="Opportunities" right={<span className="num text-xs text-muted">{opps.length}</span>}>
+      <Card
+        title="Where deals actually move"
+        right={filter ? <button className="text-xs font-medium text-accent underline" onClick={() => setFilter(null)}>Clear filter: {filter}</button> : <span className="text-xs text-muted">Pick a country to filter</span>}
+      >
+        <CorridorMap corridors={mapCorridors} selected={filter && HUBS[filter] ? filter : null} onSelect={setFilter} />
+        <p className="mt-3 text-xs text-muted">
+          Each arc is coloured by the furthest stage a deal on it has reached with confirmed evidence. Particles flow only where a deal moved past Introduced. Rings are deals inside one country.
+        </p>
+      </Card>
+
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        <Card title={filter ? `Opportunities · ${filter}` : "Opportunities"} right={<span className="num text-xs text-muted">{shown.length}</span>}>
           <ul className="divide-y divide-line">
-            {[...opps]
+            {[...shown]
               .sort((a, b) => stageIndex(b.stage) - stageIndex(a.stage) || b.updatedAt.localeCompare(a.updatedAt))
               .map((o) => (
                 <li key={o.id}>
@@ -131,8 +159,10 @@ export default function Dashboard() {
               </thead>
               <tbody className="num">
                 {corridors.map(([k, r]) => (
-                  <tr key={k} className="border-t border-line">
-                    <td className="py-1.5 font-sans">{k}</td>
+                  <tr key={k} className={`border-t border-line ${filter === k ? "bg-accent-soft" : ""}`}>
+                    <td className="py-1.5 font-sans">
+                      <button className="text-left hover:text-accent hover:underline" aria-pressed={filter === k} onClick={() => setFilter(filter === k ? null : k)}>{k}</button>
+                    </td>
                     <td className="py-1.5 text-right">{r.n}</td>
                     <td className="py-1.5 text-right">{Math.round((r.meet / r.n) * 100)}%</td>
                   </tr>

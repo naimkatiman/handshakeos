@@ -15,7 +15,7 @@ export default function Nav() {
     return (
       <Link
         href={href}
-        className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${active ? "bg-ink text-paper" : "text-muted hover:text-ink"}`}
+        className={`rounded-md px-2 py-1.5 text-sm font-medium transition sm:px-3 ${active ? "bg-ink text-paper" : "text-muted hover:text-ink"}`}
       >
         {label}
       </Link>
@@ -32,6 +32,7 @@ export default function Nav() {
         <nav className="ml-2 flex gap-1">
           {tab("/capture", "Capture")}
           {tab("/dashboard", "Outcomes")}
+          {tab("/versions", "Versions")}
         </nav>
         <div className="ml-auto">
           {status && (

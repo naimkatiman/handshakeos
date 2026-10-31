@@ -26,8 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-screen">
+        <a href="#main" className="skip-link">Skip to content</a>
         <Nav />
-        <main className="mx-auto max-w-6xl px-4 pb-24 pt-6 sm:px-6">{children}</main>
+        <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-4 pb-24 pt-6 outline-none sm:px-6">{children}</main>
       </body>
     </html>
   );

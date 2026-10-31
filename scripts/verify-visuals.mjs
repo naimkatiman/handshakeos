@@ -108,6 +108,10 @@ try {
     await page.goto(origin + '/dashboard', { waitUntil: 'networkidle' });
     await page.getByText('Your 1 deal only.', { exact: true }).waitFor();
     assert.equal(await page.getByRole('checkbox', { name: 'Include illustrative deals' }).isChecked(), false);
+    await page.emulateMedia({ media: 'print' });
+    assert.ok(await page.getByText(/HandshakeOS ecosystem report/).isVisible(), 'Printable ecosystem heading must be retained');
+    assert.equal(await page.getByRole('button', { name: 'Print report', exact: true }).isVisible(), false, 'Print controls should not print');
+    await page.emulateMedia({ media: 'screen' });
     await page.goto(origin + '/capture', { waitUntil: 'networkidle' });
     await page.locator('#your-deals').waitFor();
     assert.ok(await page.locator('section[aria-labelledby="your-deals"] a[href*="#"]').count(), 'Returning visitors need a next-action link to their deal');
